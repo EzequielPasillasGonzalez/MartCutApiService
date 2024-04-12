@@ -1,0 +1,36 @@
+{
+  "dependencies": {
+    "axios": "^1.6.8",
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-fileupload": "^1.5.0",
+    "express-validator": "^7.0.1",
+    "google-auth-library": "^9.7.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.3.1",
+    "resend": "^3.2.0",
+    "uuid": "^9.0.1"
+  },
+  "name": "martcutapiservice",
+  "description": "��#\u0000 \u0000M\u0000a\u0000r\u0000t\u0000C\u0000u\u0000t\u0000A\u0000p\u0000i\u0000S\u0000e\u0000r\u0000v\u0000i\u0000c\u0000e\u0000\r\u0000 \u0000",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EzequielPasillasGonzalez/MartCutApiService.git"
+  },
+  "author": "Johana Guadalupe Gomez Jauregui, Isaac Aaron Tovar Zavaleta, Ezequiel Pasillas Gonzalez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EzequielPasillasGonzalez/MartCutApiService/issues"
+  },
+  "homepage": "https://github.com/EzequielPasillasGonzalez/MartCutApiService#readme"
+}
