@@ -10,11 +10,23 @@ class Server {
         this.port = process.env.PORT
         
         this.paths = { //Path para las rutas
-            auth     : '/api/auth'
+            autenticar     : '/api/autenticar',
+            buscar         : '/api/buscar',
+            categoria      : '/api/categoria',
+            productos      : '/api/productos',
+            rol            : '/api/rol',
+            uploads        : '/api/uploads',
+            usuario        : '/api/usuario',
+            emprendimiento : '/api/emprendimiento',
+            centroUniversitario: '/api/centroUniversitario',
+            estatus: '/api/estatus'
         }
 
         this.server = require('http').createServer(this.app)
         
+        //Todo: Conectar a la base de datos
+        this.connectDB()
+
         //Todo: Middlewares
         this.middlewares()
 
@@ -49,7 +61,16 @@ class Server {
     }    
 
     routes(){ //todo: Rutas 
-        this.app.use(this.paths.auth, require('../routes/auth.router'))
+        this.app.use(this.paths.autenticar, require('../routes/auth.routes'))
+        // this.app.use(this.paths.buscar, require('../routes/search.routes'))
+        // this.app.use(this.paths.categoria, require('../routes/category.routes'))
+        // //this.app.use(this.paths.emprendimiento, require('../routes/user.routes'))
+        // this.app.use(this.paths.productos, require('../routes/products.routes'))
+        // this.app.use(this.paths.rol, require('../routes/role.routes'))
+        // this.app.use(this.paths.uploads, require('../routes/uploads.routes'))
+        this.app.use(this.paths.usuario, require('../routes/user.routes'))
+        this.app.use(this.paths.estatus, require('../routes/estatus.routes'))
+        //this.app.use(this.paths.centroUniversitario, require('../routes/user.routes'))
     }
 
     listen() {
