@@ -1,20 +1,26 @@
-const Category     = require('./category.models');
-//const ChatMensajes = require('./chat_mensajes.models');
-const Producto     = require('./products.models');
-const Role         = require('./role.models')
-const Server       = require('./server.models')
-const Usuario      = require('./usuario.models')
+const Emprendimiento     = require('./emprendimiento.models');
 const Estatus = require('./estatus.models')
+const Producto     = require('./producto.models');
+const Rol         = require('./rol.models')
+const TipoEmprendimiento = require('./tipo_emprendimiento.models');
+const TipoProucto = require('./tipo_producto.models');
+const Usuario = require('./usuario.models')
+const CentroUniversitario = require('./centro_universitario.models')
+const Server       = require('./server.models')
+
+
 
 
 
 module.exports = {
-    Category,
+    Emprendimiento,
     Producto,
-    Role,
+    Rol,
     Server,
     Usuario,
-    Estatus
-    //ChatMensajes
+    Estatus,
+    TipoEmprendimiento,
+    TipoProucto,
+    CentroUniversitario    
 }
 

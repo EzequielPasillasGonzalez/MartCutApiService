@@ -1,7 +1,7 @@
 const { response } = require('express')
 const bcryptjs = require('bcryptjs')
 
-const {Usuario, Estatus} = require('../models/index.models')
+const {Usuario, Estatus, Role} = require('../models/index.models')
 
 
 const usuariosGet = async (req, res = response) => {
@@ -31,25 +31,35 @@ const usuariosGet = async (req, res = response) => {
 const usuariosPut = async (req, res = response) => {
 
     const {id} = req.params
-    const { _id, passwordNew, google, order, passwordOld, ...resto } = req.body
+    const { _id, passwordNew, google, passwordOld, rol, ...resto } = req.body
 
     
-    if(passwordOld && passwordNew){
+    // if(passwordOld && passwordNew){
 
-        const user = await Usuario.findById(id);
+    //     const user = await Usuario.findById(id);
 
-        // Verficar la contraseña
-        const password_validate = bcryptjs.compareSync(passwordOld, user.password)
+    //     // Verficar la contraseña
+    //     const password_validate = bcryptjs.compareSync(passwordOld, user.password)
         
-        if(!password_validate){
-            return res.status(400).json({
-                ok: false,
-                body: "El password no es correcto"
-            })
-        }
+    //     if(!password_validate){
+    //         return res.status(400).json({
+    //             ok: false,
+    //             body: "El password no es correcto"
+    //         })
+    //     }
 
-        const salt = bcryptjs.genSaltSync()
-        resto.password = bcryptjs.hashSync(passwordNew, salt)        
+    //     const salt = bcryptjs.genSaltSync()
+    //     resto.password = bcryptjs.hashSync(passwordNew, salt)        
+    // }    
+    
+    let newRol = {}
+
+    if(rol){
+        newRol = await Role.findOne({rol})    
+    }
+
+    if(newRol){
+        resto.uid_rol = newRol._id
     }    
     
     //Todo: validar con la base de datos

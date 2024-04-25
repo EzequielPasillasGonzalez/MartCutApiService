@@ -21,7 +21,7 @@ router.get('/', usuariosGet) //? Se manda a llamar desde los controladores
 router.put('/:id', [        //? Para enviar parametros dinamicos
                     check('id', 'No es un ID valido').isMongoId(),
                     check('id').custom(existeID),
-                    check('role').custom(esRoleValido),                    
+                    // check('role').custom(esRoleValido),                    
                     validarCampos // Es para que no truene el programa y lance los errores encontrados
                 ],usuariosPut) 
 

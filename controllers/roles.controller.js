@@ -1,6 +1,6 @@
 const { response } = require('express')
 
-const Role = require('../models/role.models')
+const { Role, Estatus } = require('../models/index.models')
 
 const roleGet = async (req, res = response) =>{
 
@@ -24,8 +24,7 @@ const roleGet = async (req, res = response) =>{
 
     res.json({
         ok: true,
-        total,
-        role
+        body: role
     })
     } catch (error) {
         res.status(500).json({
@@ -36,16 +35,19 @@ const roleGet = async (req, res = response) =>{
 
 const rolePost = async (req, res = response) =>{
     
-    const {role, state} = req.body
+    const { rol } = req.body
 
-    const roleNuevo = new Role({role, state})
+    const uid_estatus = await Estatus.findOne({ _id: '662857091815a1aa5532119a' })            
+
+    const roleNuevo = new Role({ rol, uid_estatus })
+    
     
 
     await roleNuevo.save()
 
     res.json({
         ok: true,
-        roleNuevo       
+        body: roleNuevo       
     })
 }
 

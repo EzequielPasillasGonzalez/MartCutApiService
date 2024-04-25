@@ -66,7 +66,7 @@ class Server {
         // this.app.use(this.paths.categoria, require('../routes/category.routes'))
         // //this.app.use(this.paths.emprendimiento, require('../routes/user.routes'))
         // this.app.use(this.paths.productos, require('../routes/products.routes'))
-        // this.app.use(this.paths.rol, require('../routes/role.routes'))
+        this.app.use(this.paths.rol, require('../routes/role.routes'))
         // this.app.use(this.paths.uploads, require('../routes/uploads.routes'))
         this.app.use(this.paths.usuario, require('../routes/user.routes'))
         this.app.use(this.paths.estatus, require('../routes/estatus.routes'))

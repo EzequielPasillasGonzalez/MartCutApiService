@@ -12,11 +12,10 @@ const EstatusSchema = Schema ({
     fecha_modificacion: {
         type: Date,        
     },
-    modificado_por: {
+    uid_modificado_por: {
         type: Schema.Types.ObjectId,
-        ref: 'User'        
-    },
-    
+        ref: 'Usuario'
+    }, 
 
 })
 

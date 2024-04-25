@@ -30,9 +30,9 @@ const existeID = async (id = '') => {
         throw new Error(`El id ${id} no existe en la base de datos`)
     }
     
-    if(existeUsuario.state === false){
-        throw new Error(`El usuario ${existeUsuario.nombre} esta dado de baja en la base de datos`)
-    }
+    // if(existeUsuario.state === false){
+    //     throw new Error(`El usuario ${existeUsuario.nombre} esta dado de baja en la base de datos`)
+    // }
 
     return true
 }
