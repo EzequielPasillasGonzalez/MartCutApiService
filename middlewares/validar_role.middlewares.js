@@ -1,49 +1,73 @@
 const { response } = require('express')
+const { verificarRolAdministrador, verificarRolEmprendedor } = require('../helpers/db_validators.helpers')
 
-const esAdminRole = ( req, res = response, next) => {    
-    if(!req.usuario){
-        return res.status(500).json({
-            ok: false,
-            body: 'Se quiere verificar el rol primero, sin el token'
-        })
-    }
+const esAdminRole = async ( req, res = response, next) => {    
 
-    const { role, nombre} = req.usuario
-
-    if( role !== 'Admin_role'){
-        return res.status(401).json({
-            ok: false,
-            body: `${nombre} no tiene el rol requerido`
-        });        
-    }
-
-    next()
-}
-
-const tieneRole = ( ...roles ) =>{ // Se reciben los argumentos
-
-    return ( req, res = response, next) =>{
-
+    try {
         if(!req.usuario){
-            return res.status(500).json({
+            return res.status(400).json({
                 ok: false,
                 body: 'Se quiere verificar el rol primero, sin el token'
             })
         }
+    
+        const { uid_rol} = req.usuario        
 
-        if(!roles.includes(req.usuario.role)){
-            return res.status(401).json({
+        await verificarRolAdministrador(uid_rol)        
+    
+    
+       
+        next()        
+    } catch(error) {        
+        return res.status(500).json ({
                 ok: false,
-                body: `El servicio requiere uno de estos roles ${roles}`
+                body: `${error.message}`
+            })                    
+    }
+}
+
+const esEmprendedorRol = async ( req, res = response, next) => {   
+    
+    try {
+        if(!req.usuario){
+            return res.status(500).json ({            
+                ok: false,
+                body: 'Se quiere verificar el rol primero, sin el token'
             })
         }
-
+    
+        const { uid_rol} = req.usuario
+    
+        await verificarRolEmprendedor(uid_rol)
+    
         next()
+    } catch(error) {
+        // return res.status(500).json ({
+        //     ok: false,
+        //     body: `${error.message}`
+        // }) 
+        return esAdminRole(req, res, next);
     }
+
+    
+}
+
+const tieneRoleValido = ( req, res = response, next ) =>{ // Se reciben los argumentos
+                                                
+        
+        // if(!roles.includes(req.usuario.role)){
+        //     return res.status(401).json({
+        //         ok: false,
+        //         body: `El servicio requiere uno de estos roles ${roles}`
+        //     })
+        // }
+
+        next()    
 
 }
 
 module.exports = {
     esAdminRole,
-    tieneRole
+    esEmprendedorRol,
+    tieneRoleValido
 }

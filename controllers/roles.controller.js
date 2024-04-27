@@ -34,21 +34,32 @@ const roleGet = async (req, res = response) =>{
 }
 
 const rolePost = async (req, res = response) =>{
+
+    try {
+        const { rol } = req.body
+
+        const uid_estatus = await Estatus.findOne({ _id: '662857091815a1aa5532119a' })   
+        
+        const fecha_creacion = new Date()         
+
+        const roleNuevo = new Role({ rol, uid_estatus, fecha_creacion })
+        
+        
+
+        await roleNuevo.save()
+
+        res.json({
+            ok: true,
+            body: roleNuevo       
+        })    
+    } catch(error) {
+        res.json({
+            ok: true,
+            body: `Ocurrio un problema con el servidor, contacta con el administrador. ${error.message}`       
+        })    
+    }
     
-    const { rol } = req.body
-
-    const uid_estatus = await Estatus.findOne({ _id: '662857091815a1aa5532119a' })            
-
-    const roleNuevo = new Role({ rol, uid_estatus })
     
-    
-
-    await roleNuevo.save()
-
-    res.json({
-        ok: true,
-        body: roleNuevo       
-    })
 }
 
 const rolePut = async (req, res = response) => {

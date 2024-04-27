@@ -1,199 +1,503 @@
-const { Category, Producto, Role } = require('../models/index.models')
+const {
+  Estatus,
+  Usuario,
+  CentroUniversitario,
+  Producto,
+  Role,
+  Emprendimiento,
+  TipoEmprendimiento,
+  TipoProucto,
+} = require("../models/index.models");
 
-// const Usuario = require('../models/usuario.models')
-const { Estatus, Usuario } = require('../models/index.models')
+const buscarIdTipoEmprendimiento = async (id = "") => {
+  try {
+    const nombreTipoEmprendimiento = TipoEmprendimiento.findById(id);
 
-
-const esRoleValido = async (role = '') => {
-    const existeRol = await Role.findOne({role})
-    if(!existeRol){
-        throw new Error(`El rol ${role} no existe en la base de datos`)
+    if (!nombreTipoEmprendimiento) {
+      throw new Error(
+        `El Tipo de Emprendimiento no existe en la Base de Datos`
+      );
     }
-}
 
-const emailExiste = async (correo = '') => {    
+    return nombreTipoEmprendimiento;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
 
-    const regex = new RegExp( correo, 'i') 
+const buscarNombreTipoEmprendimiento = async (nombre = "") => {
+  try {
+    const nombreTipoEmprendimiento = TipoEmprendimiento.findOne({ nombre });
 
-    const existsEmail = await Usuario.findOne({correo: regex})
-
-    if(existsEmail) {        
-        throw new Error(`El correo ${correo} ya existe en la base de datos`)
+    if (nombreTipoEmprendimiento) {
+      throw new Error(
+        `El nombre del Tipo de Emprendimiento no existe en la Base de Datos`
+      );
     }
-}
 
-const existeID = async (id = '') => {
-    const existeUsuario = await Usuario.findById(id)
+    return nombreTipoEmprendimiento;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
 
-    if(!existeUsuario) {        
-        console.log('error');
-        throw new Error(`El id ${id} no existe en la base de datos`)
+const verificarExisteNombreTipoEmprendimiento = async (nombre = "") => {
+  try {
+    const nombreTipoEmprendimiento = TipoEmprendimiento.findOne({ nombre });
+
+    if (nombreTipoEmprendimiento) {
+      throw new Error(
+        `El nombre del Tipo de Emprendimiento ya existe en la Base de Datos`
+      );
     }
+
+    return nombreTipoEmprendimiento;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+const buscarIdEmprendimiento = async (id = "") => {
+  try {
+    const nombreEmprendimiento = Emprendimiento.findById(id);
+
+    if (!nombreEmprendimiento) {
+      throw new Error(`El emprendimiento no existe en la Base de Datos`);
+    }
+
+    return nombreEmprendimiento;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+const buscarNombreEmprendimiento = async (nombre = "") => {
+  try {
+    const nombreEmprendimiento = Emprendimiento.findOne({ nombre });
+
+    if (nombreEmprendimiento) {
+      throw new Error(
+        `El nombre del Emprendimiento no existe en la Base de Datos`
+      );
+    }
+
+    return nombreEmprendimiento;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+const verificarExisteNombreEmprendimiento = async (nombre = "") => {
+  try {
+    const nombreEmprendimiento = Emprendimiento.findOne({ nombre });
+
+    if (nombreEmprendimiento) {
+      throw new Error(
+        `El nombre del Emprendimiento ya existe en la Base de Datos`
+      );
+    }
+
+    return nombreEmprendimiento;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+const buscarIdCentroUniversitario = async (id = "") => {
+  try {
+    const nombreCentroUniversitario = CentroUniversitario.findById(id);
+
+    if (!nombreCentroUniversitario) {
+      throw new Error(`El Centro universitario no existe en la Base de Datos`);
+    }
+
+    return nombreCentroUniversitario;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+const buscarAbreviaturaCentroUniversitario = async (abreviado = "") => {
+  try {
+    const nombreCentroUniversitario = CentroUniversitario.findOne({
+      abreviado,
+    });
+
+    if (nombreCentroUniversitario) {
+      throw new Error(
+        `El nombre del Centro universitario no existe en la Base de Datos`
+      );
+    }
+
+    return nombreCentroUniversitario;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+const buscarNombreCentroUniversitario = async (nombre = "") => {
+  try {
+    const nombreCentroUniversitario = CentroUniversitario.findOne({ nombre });
+
+    if (nombreCentroUniversitario) {
+      throw new Error(
+        `El nombre del Centro universitario no existe en la Base de Datos`
+      );
+    }
+
+    return nombreCentroUniversitario;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+const verificarExisteNombreCentroUniversitario = async (nombre = "") => {
+  try {
+    const nombreCentroUniversitario = CentroUniversitario.findOne({ nombre });
+
+    if (nombreCentroUniversitario) {
+      throw new Error(
+        `El nombre del Centro universitario ya existe en la Base de Datos`
+      );
+    }
+
+    return nombreCentroUniversitario;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+const verificarEstatusActivo = async (objetoVerificar = "") => {
+  try {
+    const estatusActivo = await Estatus.findById("662857091815a1aa5532119a");
+    const estatusBuscar = await Estatus.findById(objetoVerificar.uid_estatus);
+
+    if (estatusActivo._id.toString() !== estatusBuscar._id.toString()) {
+      throw new Error(`El estatus de ${objetoVerificar.nombre} es inactivo`);
+    }
+    return true;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+const verificarRolAdministrador = async (estatusVerificar = "") => {
+  try {
+    const estatusActivo = await Role.findById("6629ceba69829e92a222735c");
+    const estatusBuscar = await Role.findById(estatusVerificar);
+
+    if (estatusActivo._id.toString() !== estatusBuscar._id.toString()) {
+      throw new Error(`Este tipo de usuario no puede realizar este cambio`);
+    }
+    return true;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+const verificarRolEmprendedor = async (estatusVerificar = "") => {
+  try {
+    const rolActivo = await Role.findById("662c21c97b9e30d121ec7671");
+    const rolBuscar = await Role.findById(estatusVerificar);
     
-    // if(existeUsuario.state === false){
-    //     throw new Error(`El usuario ${existeUsuario.nombre} esta dado de baja en la base de datos`)
-    // }
 
-    return true
-}
+    if (rolActivo._id.toString() !== rolBuscar._id.toString()) {
+      throw new Error(`Este tipo de usuario no puede realizar este cambio`);
+    }
+    return true;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
 
-const existeIDEstatus = async (id = '') => {
-    const existeEstatus = await Estatus.findById(id)
+// const esRoleValido = async (role = '') => {
+//     const existeRol = await Role.findOne({role})
+//     if(!existeRol){
+//         throw new Error(`El rol ${role} no existe en la base de datos`)
+//     }
+// }
+
+const emailExiste = async (correo = "") => {
+  try {
+    const regex = new RegExp(correo, "i");
+
+    const existsEmail = await Usuario.findOne({ correo: regex });
+
+    if (existsEmail) {
+      throw new Error(`El correo ${correo} ya existe en la base de datos`);
+    }
+
+    return true;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+const existeIdUsuario = async (id = "") => {
+  try {
+    const existeUsuario = await Usuario.findById(id);
+
+    if (!existeUsuario) {
+      throw new Error(`El id ${id} no existe en la base de datos`);
+    }
+
+    return existeUsuario;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+const existeIDEstatus = async (id = "") => {
+  try {
+    const existeEstatus = await Estatus.findById(id);
 
     if (!existeEstatus) {
-        console.log('error');
-        throw new Error(`El id ${id} no existe en la base de datos`)
+      throw new Error(`El id ${id} no existe en la base de datos`);
+    }
+    return true;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+// const nombreesEmprendedorRol = async (role = '') => {
+//     const nombreValido = role.endsWith('_role')
+
+//     if (!nombreValido) {
+//         throw new Error('El nombre debe de contener _role al final para que sea valido')
+//     }
+// }
+
+const existeRol = async (role = "") => {
+  try {
+    const regex = new RegExp(role, "i");
+
+    const existsRol = await Role.findOne({ nombre: regex });
+
+    if (existsRol) {
+      throw new Error(`El rol ${role} ya existe en la base de datos`);
     }
 
-    // if (existeEstatus.state === false) {
-    //     throw new Error(`El usuario ${existeUsuario.nombre} esta dado de baja en la base de datos`)
+    return true;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+const existeIDRole = async (id = "") => {
+  try {
+    const existeRole = await Role.findById(id);
+
+    if (!existeRole) {
+      throw new Error(`El id ${id} no existe en la base de datos`);
+    }
+
+    return existeRole;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+const existeIdTipoProducto = async (id = "") => {
+  try {
+    const existeCategory = await TipoProucto.findById(id);
+
+    if (!existeCategory) {
+      throw new Error(`El id ${id} no existe en la base de datos`);
+    }
+
+    return true;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+const nombreTipoProductoExiste = async (nombre = "") => {
+  try {
+    const regex = new RegExp(nombre, "i");
+
+    const existsnombre = await TipoProucto.findOne({ nombre: regex });
+
+    if (existsnombre) {
+      throw new Error(`La categoria ${nombre} ya existe en la base de datos`);
+    }
+
+    return true;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+const nombreTipoProductoExisteProduct = async (nombre = "") => {
+  try {
+    const existsnombre = await TipoProucto.findOne({ nombre });
+
+    if (!existsnombre) {
+      throw new Error(`La categoria ${nombre} no existe en la base de datos`);
+    }
+
+    return existsnombre;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+const existeIDProduct = async (id = "") => {
+  try {
+    const existeIdProducto = await Producto.findById(id);
+
+    if (!existeIdProducto) {
+      throw new Error(`El id ${id} no existe en la base de datos`);
+    }
+
+    return true;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+const buscarCorreoUserModify = async (correo = "") => {
+  try {
+    const existsEmail = await Usuario.findOne({ correo });
+
+    if (!existsEmail) {
+      throw new Error(`El correo ${correo} no existe en la base de datos`);
+    }
+
+    return existsEmail;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+const buscarCategoriaModificarProducto = async (category = "") => {
+  try {
+    const categoria = await TipoProucto.findOne({ nombre: category });
+
+    if (!categoria) {
+      throw new Error(`La categoria ${category} no existe en la base de datos`);
+    }
+
+    // const verificarEstatus = await verificarEstatusActivo(categoria)
+
+    // if(verificarEstatus !== true){
     // }
 
-    return true
-}
+    return categoria;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
 
-const nombreRolValido = async (role = '') => {
-    const nombreValido = role.endsWith('_role')    
+const buscarCategoria = async (category = "") => {
+  try {
+    const categoria = await TipoProucto.find({ nombre: category });
 
-    if(!nombreValido){
-        throw new Error('El nombre debe de contener _role al final para que sea valido')
-    }
-}
-
-const existeRol = async (role = '') =>{
-    const regex = new RegExp( role, 'i') 
-    
-    const existsRol = await Role.findOne({role: regex})    
-
-    if(existsRol){
-        throw new Error(`El rol ${role} ya existe en la base de datos`)
-    }
-}
-
-const existeIDRole = async (id = '') => {
-    const existeRole = await Role.findById(id)
-
-    if(!existeRole) {        
-        console.log('error');
-        throw new Error(`El id ${id} no existe en la base de datos`)
-    }
-}
-
-const existeIDCategory = async ( id='') =>{
-    const existeCategory = await Category.findById(id)
-
-    if(!existeCategory) {
-        console.log('Error');
-        throw new Error(`el id ${id} no existe en la base de datos`)
-    }
-}
-
-
-const nombreCategoryExiste = async (nombre = '') => {    
-
-    const regex = new RegExp( nombre, 'i') 
-
-    const existsnombre = await Category.findOne({nombre: regex})
-
-    if(existsnombre) {        
-        throw new Error(`La categoria ${nombre} ya existe en la base de datos`)
-    }
-}
-
-const nombreProductExiste = async (nombre = '') => {    
-    
-    const regex = new RegExp( nombre, 'i') 
-
-    const existsnombre = await Producto.findOne({nombre: regex})
-
-    if(existsnombre) {        
-        throw new Error(`El producto ${nombre} ya existe en la base de datos`)
-    }
-}
-
-const nombreCategoryExisteProduct = async (nombre = '') => {    
-    const existsnombre = await Category.findOne({nombre})
-
-    if(!existsnombre) {        
-        throw new Error(`La categoria ${nombre} no existe en la base de datos`)
-    }
-}
-
-const existeIDProduct = async ( id='') =>{
-    const existeCategory = await Producto.findById(id)    
-
-    if(!existeCategory) {
-        console.log('Error');
-        throw new Error(`El id ${id} no existe en la base de datos`)
-    }
-}
-
-const buscarCorreoUserModify = async (correo = '') => {
-    const existsEmail = await Usuario.findOne({correo})
-
-        if(!existsEmail) {        
-            throw new Error(`El correo ${correo} no existe en la base de datos`)
-        }
-
-        return existsEmail
-}
-
-const buscarCategoriaModificarProducto = async (category = '') => {
-    const categoria = await Category.findOne({nombre:category})
-
-        if(!categoria){
-            throw new Error(`La categoria ${category} no existe en la base de datos`)
-        }
-        
-
-    if(categoria.state === false){
-        throw new Error(`La categoria ${categoria.nombre} esta dada de baja en la base de datos`)
+    if (!categoria) {
+      throw new Error(`La categoria ${category} no existe en la base de datos`);
     }
 
-    return categoria
-}
+    // const verificarEstatus = await verificarEstatusActivo(categoria)
 
+    // if(verificarEstatus !== true){
+    //     throw new Error(`LA categoria esta dada de baja`)
+    // }
+    return categoria;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
 
-const buscarCategoria = async (category = '') => {
-    const categoria = await Category.find({nombre:category})
+const coleccionesPermitidas = async (coleccion = "", colecciones = []) => {
+  const incluida = colecciones.includes(coleccion);
 
-        if(!categoria){
-            throw new Error(`La categoria ${category} no existe en la base de datos`)
-        }
-        
+  if (!incluida) {
+    throw new Error(
+      `La coleccion ${coleccion} no es permitida, las permitidas son ${colecciones}`
+    );
+  }
 
-    if(categoria.state === false){
-        throw new Error(`La categoria ${categoria.nombre} esta dada de baja en la base de datos`)
-    }            
-    return categoria
-}
-
-const coleccionesPermitidas = async ( coleccion = '', colecciones = [] ) => {
-
-    const incluida = colecciones.includes(coleccion)
-
-    if( !incluida ){
-        throw new Error(`La coleccion ${coleccion} no es permitida, las permitidas son ${colecciones}`)
-    }
-
-    return true
-}
+  return true;
+};
 
 module.exports = {
-    esRoleValido,
-    emailExiste,
-    existeID,
-    nombreRolValido,
-    existeRol,
-    existeIDRole,
-    existeIDCategory,
-    nombreCategoryExiste,
-    nombreProductExiste,
-    nombreCategoryExisteProduct,
-    existeIDProduct,
-    buscarCorreoUserModify,
-    buscarCategoriaModificarProducto,
-    buscarCategoria,
-    coleccionesPermitidas,
-    existeIDEstatus
-}
+  // esRoleValido,
+  // nombreProductExiste,
+  // nombreesEmprendedorRol,
+  buscarAbreviaturaCentroUniversitario,
+  buscarCategoria,
+  buscarCategoriaModificarProducto,
+  buscarCorreoUserModify,
+  buscarIdCentroUniversitario,
+  buscarIdEmprendimiento,
+  buscarIdTipoEmprendimiento,
+  buscarNombreCentroUniversitario,
+  buscarNombreEmprendimiento,
+  buscarNombreTipoEmprendimiento,
+  coleccionesPermitidas,
+  emailExiste,
+  existeIDEstatus,
+  existeIDProduct,
+  existeIDRole,
+  existeIdTipoProducto,
+  existeIdUsuario,
+  existeRol,
+  nombreTipoProductoExiste,
+  nombreTipoProductoExisteProduct,
+  verificarEstatusActivo,
+  verificarExisteNombreCentroUniversitario,
+  verificarExisteNombreEmprendimiento,
+  verificarExisteNombreEmprendimiento,
+  verificarRolAdministrador,
+  verificarRolEmprendedor,
+};

@@ -3,7 +3,7 @@ const { check } = require('express-validator')
 
 const { validarJWT, validarCampos, esAdminRole } = require('../middlewares/index.middlewares')
 const { createProduct, getProducts, getProductById, updateProduct, deleteProduct, updateProductList } = require('../controllers/products.controllers')
-const { nombreProductExiste, nombreCategoryExisteProduct, existeIDProduct } = require('../helpers/db_validators.helpers')
+const { nombreTipoProductoExisteProduct, existeIDProduct } = require('../helpers/db_validators.helpers')
 
 
 const router = Router()
@@ -29,9 +29,9 @@ router.get('/:id', [
 router.post('/', [
     validarJWT,
     check('nombre', 'Es necesario un nombre para poder crear el producto').notEmpty(),
-    check('nombre').custom(nombreProductExiste),
+    // check('nombre').custom(nombreProductExiste),
     check('category', 'La categoria es necesaria para la creación de los productos').notEmpty(),
-    check('category').custom(nombreCategoryExisteProduct),
+    check('category').custom(nombreTipoProductoExisteProduct),
     validarCampos
 ], createProduct)
 

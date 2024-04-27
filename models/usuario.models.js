@@ -14,7 +14,7 @@ const UsuarioSchema = Schema ({
     },
     celular: {
         type: String,
-        required: [true, 'El numero de telefono es obligatorio'],
+        required: [true, 'El numero de celular es obligatorio'],
         unique: true
     },
     correo: {

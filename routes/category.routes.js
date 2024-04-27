@@ -3,7 +3,7 @@ const { check } = require('express-validator')
 
 const { validarJWT, validarCampos, esAdminRole } = require('../middlewares/index.middlewares')
 const { createCategory, getCategories, getCategoryByID, updateCategoryByID, deleteCategoryByID } = require('../controllers/category.controller')
-const { existeIDCategory, nombreCategoryExiste,  } = require('../helpers/db_validators.helpers')
+const { existeIdTipoProducto, nombreTipoProductoExiste,  } = require('../helpers/db_validators.helpers')
 
 
 const router = Router()
@@ -20,7 +20,7 @@ router.get('/', getCategories)
 router.get('/:id', [
     check('id', 'El ID es necesario para la búsqueda especializada').notEmpty(),
     check('id', 'El ID no es validio').isMongoId(),
-    check('id').custom(existeIDCategory),
+    check('id').custom(existeIdTipoProducto),
     validarCampos
 ], getCategoryByID)
 
@@ -29,7 +29,7 @@ router.get('/:id', [
 router.post('/', [
     validarJWT,
     check('nombre', 'Es necesario un nombre para poder crear la cateogria').notEmpty(),
-    check('nombre').custom(nombreCategoryExiste),
+    check('nombre').custom(nombreTipoProductoExiste),
     validarCampos
 ],  createCategory)
 
@@ -38,8 +38,8 @@ router.put('/:id', [
     validarJWT,
     check('id', 'El ID es necesario para la modificacion').notEmpty(),
     check('id', 'El ID no es validio').isMongoId(),
-    check('id').custom(existeIDCategory),    
-    check('nombre').custom(nombreCategoryExiste),
+    check('id').custom(existeIdTipoProducto),    
+    check('nombre').custom(nombreTipoProductoExiste),
     validarCampos
 ],updateCategoryByID)
 
@@ -49,7 +49,7 @@ router.delete('/:id', [
     esAdminRole,
     check('id', 'El ID es necesario para la modificacion').notEmpty(),
     check('id', 'El ID no es validio').isMongoId(),
-    check('id').custom(existeIDCategory),
+    check('id').custom(existeIdTipoProducto),
     validarCampos
 ], deleteCategoryByID)
 

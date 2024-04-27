@@ -77,14 +77,14 @@ const usuariosPut = async (req, res = response) => {
 const usuariosPost = async (req, res = response) => {
     
     try {
-        const { nombre, apellido_paterno, apellido_materno, correo, password } = req.body
+        const { password, apellido_materno, ...resto } = req.body
 
-        const rol = 'Administrador'
+        const roleDB = await Role.findOne({ _id: '662c21e97b9e30d121ec7674' })            
         const createDate = new Date()
 
         const estatusDB = await Estatus.findOne({ _id: '662857091815a1aa5532119a' })            
 
-        let usuario = new Usuario({ nombre, correo, apellido_paterno, password, rol, uid_estatus: estatusDB._id, fecha_creacion: createDate })
+        let usuario = new Usuario({ password, uid_rol: roleDB._id, uid_estatus: estatusDB._id, fecha_creacion: createDate, ...resto })
 
         if (apellido_materno) {
             usuario.apellido_materno = apellido_materno
