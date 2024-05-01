@@ -44,7 +44,7 @@ const EmprendimientoSchema = Schema({
 
 EmprendimientoSchema.methods.toJSON = function () {
     const {__v, _id, ...emprendimiento} = this.toObject()    
-    emprendimiento.uID = _id
+    emprendimiento.uid = _id
     return emprendimiento
 }
 

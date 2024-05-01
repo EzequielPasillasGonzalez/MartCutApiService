@@ -21,7 +21,7 @@ const EstatusSchema = Schema ({
 
 EstatusSchema.methods.toJSON = function() {
     const { __v, _id, ...estatus} = this.toObject() // se saca la version y el password y el resto se guarda en ...usuario para poder mostrarlo o cualquier otra cosa         
-    estatus.uID = _id
+    estatus.uid = _id
     return estatus
 }
 

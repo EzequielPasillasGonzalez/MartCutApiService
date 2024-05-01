@@ -9,6 +9,126 @@ const {
   TipoProucto,
 } = require("../models/index.models");
 
+const getEstaus = async () => {
+  
+  try {
+    const estatus = await Estatus.find()  
+
+    return estatus
+  } catch(error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+}
+
+const getUsuarios = async () => {
+  
+  try {
+    const usuarios = await Usuario.find()  
+
+    return usuarios
+  } catch(error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+}
+
+const obtenerRolAdministrador   = async () => {
+  try {
+    const rolAdministrador = await Role.findOne({ _id: '6629ceba69829e92a222735c' })            
+
+    return rolAdministrador
+
+  } catch(error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+}
+
+const obtenerRolEmprendedor   = async () => {
+  try {
+    const rolEmprendedor = await Role.findOne({ _id: '662c21c97b9e30d121ec7671' })            
+
+    return rolEmprendedor
+
+  } catch(error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+}
+
+const obtenerRolUsuario   = async () => {
+  try {
+    const rolUsuario = await Role.findOne({ _id: '662c21e97b9e30d121ec7674' })            
+
+    return rolUsuario
+
+  } catch(error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+}
+
+const obtenerEstatusPausado = async () => {
+  try {
+    const estatusPausado = await Estatus.findOne({ _id: '6631807a231179dc53ddc852' })            
+
+    return estatusPausado
+
+  } catch(error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+}
+
+const obtenerEstatusInactivo = async () => {
+  try {
+    const estatusInactivo = await Estatus.findOne({ _id: '66286a4e387f975b640c2368' })            
+
+    return estatusInactivo
+
+  } catch(error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+}
+
+const obtenerEstatusNombre = async (nombre = '') => {
+  try {
+
+    const regex = new RegExp(nombre, "i");
+
+    const estatusNombre = await Estatus.findOne({ nombre: regex })            
+
+    return estatusNombre
+
+  } catch(error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+}
+
+const obtenerEstatusActivo = async () => {
+  try {
+    const estatusActivo = await Estatus.findOne({ _id: '662857091815a1aa5532119a' })            
+
+    return estatusActivo
+
+  } catch(error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+}
+
 const buscarIdTipoEmprendimiento = async (id = "") => {
   try {
     const nombreTipoEmprendimiento = TipoEmprendimiento.findById(id);
@@ -236,6 +356,23 @@ const verificarRolEmprendedor = async (estatusVerificar = "") => {
   }
 };
 
+const verificarRolUsuario = async (estatusVerificar = "") => {
+  try {
+    const rolActivo = await Role.findById("662c21e97b9e30d121ec7674");
+    const rolBuscar = await Role.findById(estatusVerificar);
+    
+
+    if (rolActivo._id.toString() !== rolBuscar._id.toString()) {
+      throw new Error(`Este tipo de usuario no puede realizar este cambio`);
+    }
+    return true;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
 // const esRoleValido = async (role = '') => {
 //     const existeRol = await Role.findOne({role})
 //     if(!existeRol){
@@ -251,6 +388,24 @@ const emailExiste = async (correo = "") => {
 
     if (existsEmail) {
       throw new Error(`El correo ${correo} ya existe en la base de datos`);
+    }
+
+    return true;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+const celularExiste = async (celular = "") => {
+  try {
+    const regex = new RegExp(celular, "i");
+
+    const existsCelular = await Usuario.findOne({ celular: regex });
+
+    if (existsCelular) {
+      throw new Error(`El celular ${celular} ya existe en la base de datos`);
     }
 
     return true;
@@ -500,4 +655,16 @@ module.exports = {
   verificarExisteNombreEmprendimiento,
   verificarRolAdministrador,
   verificarRolEmprendedor,
+  verificarRolUsuario,
+  obtenerRolUsuario,
+  obtenerEstatusActivo,
+  obtenerRolAdministrador,
+  obtenerRolEmprendedor,
+  celularExiste,
+  verificarExisteNombreTipoEmprendimiento,
+  getUsuarios,
+  getEstaus,
+  obtenerEstatusPausado,
+  obtenerEstatusInactivo,
+  obtenerEstatusNombre
 };

@@ -1,13 +1,13 @@
 const { response } = require('express')
-const bcryptjs = require('bcryptjs')
 
 const { Estatus } = require('../models/index.models')
+const { getEstaus } = require('../helpers/db_validators.helpers')
 
 
 const estatusGet = async (req, res = response) => {
     
    try {
-       const estatus = await Estatus.find()
+       const estatus = await getEstaus()
 
        res.json({
            ok: true,

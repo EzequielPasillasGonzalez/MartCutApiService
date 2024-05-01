@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose');
 
-const ProductSchema = Schema({
+const ProductoSchema = Schema({
     nombre: {
         type: String,
         required: [true, 'El nombre es obligatorio'],           
@@ -42,10 +42,10 @@ const ProductSchema = Schema({
     
 })
 
-ProductSchema.methods.toJSON = function () {
+ProductoSchema.methods.toJSON = function () {
     const {__v, _id, ...produto} = this.toObject()    
-    produto.uID = _id
+    produto.uid = _id
     return produto
 }
 
-module.exports = model('Producto', ProductSchema) // Roles, verifica si la coleccion existe en mongodb y si no la crea
+module.exports = model('Producto', ProductoSchema) // Roles, verifica si la coleccion existe en mongodb y si no la crea

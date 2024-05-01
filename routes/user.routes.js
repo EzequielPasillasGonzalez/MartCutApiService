@@ -2,10 +2,10 @@ const { Router } = require('express')
 const { check } = require('express-validator')
 
 
-const { validarCampos, validarJWT, esAdminRole, esEmprendedorRol } = require('../middlewares/index.middlewares')
+const { validarCampos, validarJWT, esAdminRole, esEmprendedorRolRecursivo, esUsuarioRolRecursivo, esEmprendedorRol, validarArchivoSubir } = require('../middlewares/index.middlewares')
 
-const { usuariosGet, usuariosPut, usuariosPost, usuariosDelete, usuariosPatch } = require('../controllers/user.controllers')
-const { esRoleValido, emailExiste, existeIdUsuario } = require('../helpers/index.helpers')
+const { usuariosGet, usuariosPut, usuariosPost, usuariosDelete, usuariosPatch, usuariosAltaEmprendedor, usuariosBaja } = require('../controllers/user.controllers')
+const { esRoleValido, emailExiste, existeIdUsuario, celularExiste } = require('../helpers/index.helpers')
 const { manejoErores } = require('../middlewares/manejo_erores.middlewares')
 
 
@@ -18,19 +18,31 @@ router.put('/:id', [        //? Para enviar parametros dinamicos
     validarJWT,
     check('id', 'No es un ID valido').isMongoId(),
     check('id').custom(existeIdUsuario),
-    esEmprendedorRol,      
-    validarCampos, // Es para que no truene el programa y lance los errores encontrados
-    // manejoErores
+    esUsuarioRolRecursivo,      
+    validarCampos, // Es para que no truene el programa y lance los errores encontrados    
 ], usuariosPut)
+
+router.put('/emprendedor/:id', [        //? Para enviar parametros dinamicos
+    validarJWT,
+    check('id', 'No es un ID valido').isMongoId(),
+    check('id').custom(existeIdUsuario),
+    esUsuarioRolRecursivo,      
+    validarCampos, // Es para que no truene el programa y lance los errores encontrados    
+], usuariosAltaEmprendedor)
 
 
 router.post('/',
     [
         check('nombre', 'El nombre es obligatorio').not().isEmpty(), // No tiene que estar vacio
         check('apellido_paterno', 'El apellido paterno es obligatorio').not().isEmpty(), // No tiene que estar vacio                
-        check('password', 'El password es obligatorio y debe de contener más de 8 carácteres').isLength({ min: 8 }),
+        check('password', 'La contraseña es obligatoria').not().isEmpty(),
+        check('password', 'La contraseña es obligatoria y debe de contener almenos de 8 carácteres').isLength({ min: 8 }),
+        check('correo', 'El correo es obligatorio').not().isEmpty(),
         check('correo', 'El correo no es valido').isEmail(),
         check('correo').custom(emailExiste),
+        check('celular', 'El celular es obligatorio').not().isEmpty(),
+        check('celular', 'El celular es obligatorio').isLength({ min: 10 }),
+        check('celular').custom(celularExiste),
         validarCampos
     ],
     usuariosPost
@@ -45,6 +57,16 @@ router.delete('/:id', [
     check('id').custom(existeIdUsuario),
     validarCampos
 ], usuariosDelete)
+
+router.delete('/baja/:id', [
+    validarJWT,
+    esUsuarioRolRecursivo,                // Obligatoriamente necesita ser administrador para pasar
+    //tieneRole('User_role', 'Sales_role'), // Puede ser cualquiera de esos dos para pasar
+    check('id', 'Se necesita un ID para actualizar').notEmpty(),
+    check('id', 'No es un ID valido').isMongoId(),
+    check('id').custom(existeIdUsuario),
+    validarCampos
+], usuariosBaja)
 
 router.patch('/', usuariosPatch)
 

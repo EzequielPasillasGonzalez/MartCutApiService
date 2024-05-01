@@ -26,7 +26,7 @@ const TipoProductSchema = Schema({
 
 TipoProductSchema.methods.toJSON = function () {
     const {__v, _id, ...produto} = this.toObject()    
-    produto.uID = _id
+    produto.uid = _id
     return produto
 }
 

@@ -25,7 +25,7 @@ const TipoentregaSchema = Schema ({
 
 TipoentregaSchema.methods.toJSON = function() {
     const { __v, _id, ...entrega} = this.toObject() // se saca la version y el password y el resto se guarda en ...usuario para poder mostrarlo o cualquier otra cosa         
-    entrega.uID = _id
+    entrega.uid = _id
     return entrega
 }
 

@@ -2,76 +2,111 @@ const { response } = require('express')
 const bcryptjs = require('bcryptjs')
 
 const {Usuario, Estatus, Role} = require('../models/index.models')
+const { obtenerRolUsuario, obtenerEstatusActivo, existeIdUsuario, obtenerRolEmprendedor, celularExiste, getUsuarios, obtenerEstatusInactivo, obtenerEstatusPausado, obtenerEstatusNombre } = require('../helpers/db_validators.helpers')
 
 
 const usuariosGet = async (req, res = response) => {
     
-    const query = {state: true} //? Es para contar los que estan activos
+    // const query = {state: true} //? Es para contar los que estan activos
 
-    let { limit, from} = req.query
+    // let { limit, from} = req.query
 
-    // Verificar y asignar valores predeterminados si son cadenas vacías o no están definidos
-    limit = limit === '' || limit === undefined ? 5 : Number(limit);
-    from = from === '' || from === undefined ? 0 : Number(from);
+    // // Verificar y asignar valores predeterminados si son cadenas vacías o no están definidos
+    // limit = limit === '' || limit === undefined ? 5 : Number(limit);
+    // from = from === '' || from === undefined ? 0 : Number(from);
 
-    const [total, user] = await Promise.all([
-        Usuario.countDocuments(query), //? Buscan solo los que estan activos
-        Usuario.find(query)
-                        .skip(Number(from))
-                        .limit(Number(limit))
-    ])
+    // const [total, user] = await Promise.all([
+    //     Usuario.countDocuments(query), //? Buscan solo los que estan activos
+    //     Usuario.find(query)
+    //                     .skip(Number(from))
+    //                     .limit(Number(limit))
+    // ])
+
+    const usuarios = await getUsuarios()
 
     res.json({
-        ok: true, 
-        total,       
-        body: user,        
+        ok: true,         
+        body: usuarios,        
     })
 }
 
 const usuariosPut = async (req, res = response) => {
 
-    const {id} = req.params
-    const { _id, passwordNew, google, passwordOld, rol, ...resto } = req.body
+    try {
+        const {id} = req.params
+        const { _id, passwordNueva, google, password, rol, correo, celular, uid_estatus, ...resto } = req.body        
+            
+    if(password && passwordNueva && password.length >= 8 && passwordNueva.length >= 8){
 
-    
-    // if(passwordOld && passwordNew){
+        const user = await existeIdUsuario(id)        
 
-    //     const user = await Usuario.findById(id);
-
-    //     // Verficar la contraseña
-    //     const password_validate = bcryptjs.compareSync(passwordOld, user.password)
+        // Verficar la contraseña
+        const password_validate = bcryptjs.compareSync(password, user.password)        
         
-    //     if(!password_validate){
-    //         return res.status(400).json({
-    //             ok: false,
-    //             body: "El password no es correcto"
-    //         })
-    //     }
+        if(!password_validate){
+            return res.status(400).json({
+                ok: false,
+                body: "Verifica la contraseña original"
+            })
+        }
 
-    //     const salt = bcryptjs.genSaltSync()
-    //     resto.password = bcryptjs.hashSync(passwordNew, salt)        
-    // }    
-    
-    let newRol = {}
+        const salt = bcryptjs.genSaltSync()
+        resto.password = bcryptjs.hashSync(passwordNueva, salt)        
+    }            
 
-    if(rol){
-        newRol = await Role.findOne({rol})    
+    if(celular){
+        const existeCelular = await celularExiste(celular)        
+        if(existeCelular === true){
+            resto.celular = celular
+        }
     }
 
-    if(newRol){
-        resto.uid_rol = newRol._id
-    }    
+    const fecha_modificacion = new Date()
+
+    resto.fecha_modificacion = fecha_modificacion          
     
     //Todo: validar con la base de datos
     const usuario = await Usuario.findByIdAndUpdate(id, resto, {new : true})
 
-
-
-
     res.json({
         ok: true,        
         body: usuario
-    })
+    })        
+    } catch(error) {
+        res.json({
+            ok: false,
+            body: error.message
+        })
+    }
+    
+}
+
+const usuariosAltaEmprendedor = async (req, res = response) => {
+
+    try {
+        const {id} = req.params
+    const { rol, ...resto } = req.body 
+    
+    if(rol === true){
+        const fecha_modificacion = new Date()  
+        const rolEmprendedor = await obtenerRolEmprendedor()                   
+    
+        //Todo: validar con la base de datos
+        const usuario = await Usuario.findByIdAndUpdate(id, {uid_rol: rolEmprendedor._id, fecha_modificacion}, {new : true})
+
+        res.json({
+            ok: true,        
+            body: usuario
+        })        
+    }
+    
+    } catch(error) {
+        res.json({
+            ok: false,
+            body: error.message
+        })
+    }
+    
 }
 
 const usuariosPost = async (req, res = response) => {
@@ -79,12 +114,14 @@ const usuariosPost = async (req, res = response) => {
     try {
         const { password, apellido_materno, ...resto } = req.body
 
-        const roleDB = await Role.findOne({ _id: '662c21e97b9e30d121ec7674' })            
-        const createDate = new Date()
+        const rolUsuario = await obtenerRolUsuario()
+        const estatusActivo = await obtenerEstatusActivo()
 
-        const estatusDB = await Estatus.findOne({ _id: '662857091815a1aa5532119a' })            
+        const fecha_creacion = new Date()
 
-        let usuario = new Usuario({ password, uid_rol: roleDB._id, uid_estatus: estatusDB._id, fecha_creacion: createDate, ...resto })
+        
+
+        let usuario = new Usuario({ password, uid_rol: rolUsuario._id, uid_estatus: estatusActivo._id, fecha_creacion, ...resto })
 
         if (apellido_materno) {
             usuario.apellido_materno = apellido_materno
@@ -111,18 +148,55 @@ const usuariosPost = async (req, res = response) => {
 }
 
 const usuariosDelete = async (req, res = response) => {
-    const {id} = req.params        
 
-    // Se elimina logicamente, solo se pone en false el esado
-    const usuario = await Usuario.findByIdAndUpdate(id, {state: false}) // Se cambia el estado para no perder integridad
+    try {
+        const {id} = req.params        
 
-    const usuarioAutenticado = req.usuario
+        const {estatus} = req.body
+
+        const rolBuscado = await obtenerEstatusNombre(estatus)        
+
+        // Se elimina logicamente, solo se pone en inactivo el estatus
+        const usuario = await Usuario.findByIdAndUpdate(id, {uid_estatus: rolBuscado._id},  {new : true}) // Se cambia el estatus para no perder integridad    
+
+        res.json({
+            ok: true,
+            body: usuario,  
+        
+        })
+    } catch(error) {
+        res.json({
+            ok: false,
+            body: error.message
+        })
+    }
+    
+}
+
+const usuariosBaja = async (req, res = response) => {    
+
+    try {
+
+        const {id} = req.params        
+
+
+    const rolInactivo = await obtenerEstatusPausado()    
+
+    // Se elimina logicamente, solo se pone en inactivo el estatus
+    const usuario = await Usuario.findByIdAndUpdate(id, {uid_estatus: rolInactivo._id},  {new : true}) // Se cambia el estatus para no perder integridad    
 
     res.json({
         ok: true,
         body: usuario,  
-        user: usuarioAutenticado        
+       
     })
+        
+    } catch(error) {
+        res.json({
+            ok: false,
+            body: error.message
+        })
+    }
 }
 
 const usuariosPatch = (req, res = response) => {
@@ -137,5 +211,7 @@ module.exports = {
     usuariosPut,
     usuariosPost,
     usuariosDelete,
-    usuariosPatch
+    usuariosPatch,
+    usuariosAltaEmprendedor,
+    usuariosBaja
 }

@@ -35,7 +35,7 @@ const CentrosUniversitariosSchema = Schema({
 
 CentrosUniversitariosSchema.methods.toJSON = function () {
     const {__v, _id, ...centro_universitario} = this.toObject()    
-    centro_universitario.uID = _id
+    centro_universitario.uid = _id
     return centro_universitario
 }
 
