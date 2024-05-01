@@ -63,8 +63,12 @@ const usuariosPut = async (req, res = response) => {
 
     const fecha_modificacion = new Date()
 
+    const uid_modificado_por = req.usuario.uid
+
     resto.fecha_modificacion = fecha_modificacion          
     
+    resto.uid_modificado_por = uid_modificado_por
+
     //Todo: validar con la base de datos
     const usuario = await Usuario.findByIdAndUpdate(id, resto, {new : true})
 
@@ -90,9 +94,10 @@ const usuariosAltaEmprendedor = async (req, res = response) => {
     if(rol === true){
         const fecha_modificacion = new Date()  
         const rolEmprendedor = await obtenerRolEmprendedor()                   
+        const uid_modificado_por = req.usuario.uid
     
         //Todo: validar con la base de datos
-        const usuario = await Usuario.findByIdAndUpdate(id, {uid_rol: rolEmprendedor._id, fecha_modificacion}, {new : true})
+        const usuario = await Usuario.findByIdAndUpdate(id, {uid_rol: rolEmprendedor._id, fecha_modificacion, uid_modificado_por}, {new : true})
 
         res.json({
             ok: true,        
@@ -117,7 +122,7 @@ const usuariosPost = async (req, res = response) => {
         const rolUsuario = await obtenerRolUsuario()
         const estatusActivo = await obtenerEstatusActivo()
 
-        const fecha_creacion = new Date()
+        const fecha_creacion = new Date()        
 
         
 
@@ -154,10 +159,12 @@ const usuariosDelete = async (req, res = response) => {
 
         const {estatus} = req.body
 
-        const rolBuscado = await obtenerEstatusNombre(estatus)        
+        const estatusBuscado = await obtenerEstatusNombre(estatus)        
+        const fecha_modificacion = new Date()  
+        const uid_modificado_por = req.usuario.uid
 
         // Se elimina logicamente, solo se pone en inactivo el estatus
-        const usuario = await Usuario.findByIdAndUpdate(id, {uid_estatus: rolBuscado._id},  {new : true}) // Se cambia el estatus para no perder integridad    
+        const usuario = await Usuario.findByIdAndUpdate(id, {uid_estatus: estatusBuscado._id, fecha_modificacion, uid_modificado_por},  {new : true}) // Se cambia el estatus para no perder integridad    
 
         res.json({
             ok: true,
@@ -181,9 +188,11 @@ const usuariosBaja = async (req, res = response) => {
 
 
     const rolInactivo = await obtenerEstatusPausado()    
+    const fecha_modificacion = new Date() 
+    const uid_modificado_por = req.usuario.uid
 
     // Se elimina logicamente, solo se pone en inactivo el estatus
-    const usuario = await Usuario.findByIdAndUpdate(id, {uid_estatus: rolInactivo._id},  {new : true}) // Se cambia el estatus para no perder integridad    
+    const usuario = await Usuario.findByIdAndUpdate(id, {uid_estatus: rolInactivo._id, fecha_modificacion, uid_modificado_por},  {new : true}) // Se cambia el estatus para no perder integridad    
 
     res.json({
         ok: true,

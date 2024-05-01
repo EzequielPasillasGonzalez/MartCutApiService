@@ -2,11 +2,10 @@ const { Router } = require('express')
 const { check } = require('express-validator')
 
 
-const { validarCampos, validarJWT, esAdminRole, esEmprendedorRolRecursivo, esUsuarioRolRecursivo, esEmprendedorRol, validarArchivoSubir } = require('../middlewares/index.middlewares')
+const { validarCampos, validarJWT, esAdminRole, esUsuarioRolRecursivo } = require('../middlewares/index.middlewares')
 
 const { usuariosGet, usuariosPut, usuariosPost, usuariosDelete, usuariosPatch, usuariosAltaEmprendedor, usuariosBaja } = require('../controllers/user.controllers')
-const { esRoleValido, emailExiste, existeIdUsuario, celularExiste } = require('../helpers/index.helpers')
-const { manejoErores } = require('../middlewares/manejo_erores.middlewares')
+const { emailExiste, existeIdUsuario, celularExiste } = require('../helpers/index.helpers')
 
 
 
@@ -68,6 +67,6 @@ router.delete('/baja/:id', [
     validarCampos
 ], usuariosBaja)
 
-router.patch('/', usuariosPatch)
+// router.patch('/', usuariosPatch)
 
 module.exports = router

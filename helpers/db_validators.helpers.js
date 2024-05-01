@@ -459,7 +459,7 @@ const existeRol = async (role = "") => {
   try {
     const regex = new RegExp(role, "i");
 
-    const existsRol = await Role.findOne({ nombre: regex });
+    const existsRol = await Role.findOne({ nombre: regex });    
 
     if (existsRol) {
       throw new Error(`El rol ${role} ya existe en la base de datos`);
@@ -474,8 +474,9 @@ const existeRol = async (role = "") => {
 };
 
 const existeIDRole = async (id = "") => {
-  try {
+  try {        
     const existeRole = await Role.findById(id);
+    
 
     if (!existeRole) {
       throw new Error(`El id ${id} no existe en la base de datos`);
