@@ -473,6 +473,24 @@ const existeRol = async (role = "") => {
   }
 };
 
+const existeEstatusNombre = async (nombre = "") => {
+  try {
+    const regex = new RegExp(nombre, "i");
+
+    const existsRol = await Estatus.findOne({ nombre: regex });    
+
+    if (existsRol) {
+      throw new Error(`El estatus ${nombre} ya existe en la base de datos`);
+    }
+
+    return true;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
 const existeIDRole = async (id = "") => {
   try {        
     const existeRole = await Role.findById(id);
@@ -667,5 +685,6 @@ module.exports = {
   getEstaus,
   obtenerEstatusPausado,
   obtenerEstatusInactivo,
-  obtenerEstatusNombre
+  obtenerEstatusNombre,
+  existeEstatusNombre
 };

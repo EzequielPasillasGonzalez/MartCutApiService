@@ -31,9 +31,13 @@ const estatusPut = async (req, res = response) => {
         const { id } = req.params
         const { nombre } = req.body
 
+        const fecha_modificacion = new Date()  
+        const uid_modificado_por = req.usuario.uid
+
+
 
         //Todo: validar con la base de datos
-        const estatus = await Estatus.findByIdAndUpdate(id, { nombre }, { new: true })
+        const estatus = await Estatus.findByIdAndUpdate(id, { nombre, uid_modificado_por, fecha_modificacion  }, { new: true })
 
 
         res.json({

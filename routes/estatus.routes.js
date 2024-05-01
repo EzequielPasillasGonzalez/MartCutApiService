@@ -8,7 +8,7 @@ const { check } = require('express-validator')
 const { validarCampos, validarJWT, esAdminRole, tieneRole  } = require('../middlewares/index.middlewares')
 
 const { estatusGet, estatusPut, estatusPost } = require('../controllers/estatus.controllers')
-const { esRoleValido, emailExiste, existeIDEstatus } = require('../helpers/db_validators.helpers')
+const { esRoleValido, emailExiste, existeIDEstatus, existeRol, existeEstatusNombre } = require('../helpers/db_validators.helpers')
 
 
 
@@ -19,8 +19,13 @@ const router = Router()
 router.get('/', estatusGet) //? Se manda a llamar desde los controladores
 
 router.put('/:id', [        //? Para enviar parametros dinamicos
+                    validarJWT,
+                    esAdminRole,
+                    check('id', 'Se necesita un ID para actualizar').notEmpty(),
                     check('id', 'No es un ID valido').isMongoId(),
                     check('id').custom(existeIDEstatus),
+                    check('nombre', 'Se necesita el nuevo nombre').notEmpty(),
+                    check('nombre').custom(existeEstatusNombre),                                        
                     // check('role').custom(esRoleValido),                    
                     validarCampos // Es para que no truene el programa y lance los errores encontrados
 ], estatusPut) 
@@ -28,8 +33,9 @@ router.put('/:id', [        //? Para enviar parametros dinamicos
 router.post('/', 
             [
                 validarJWT,
-                // esAdminRole,
-                check('nombre', 'El nombre del esatus es obligatorio').not().isEmpty(), // No tiene que estar vacio                
+                esAdminRole,
+                check('nombre', 'El nombre del estatus es obligatorio').not().isEmpty(), // No tiene que estar vacio                
+                check('nombre').custom(existeEstatusNombre),                                        
                 validarCampos
             ], 
             estatusPost
