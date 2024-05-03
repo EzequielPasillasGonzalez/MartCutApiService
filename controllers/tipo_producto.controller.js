@@ -1,42 +1,30 @@
 const { response } = require("express");
 
-const { Category } = require('../models/index.models');
-const { buscarCorreoUserModify } = require("../helpers/db_validators.helpers");
+const { TipoProucto } = require('../models/index.models');
+const { buscarCorreoUserModify, obtenerEstatusActivo, existeIDEstatus } = require("../helpers/db_validators.helpers");
 
 const createCategory = async (req, res = response) => {
 
     try {
 
-    const nombre = req.body.nombre.toUpperCase()
+    const { nombre } = req.body    
 
-
-    const regex = new RegExp( nombre, 'i') 
-
-    const categoryDB = await Category.findOne({ nombre: regex })    
-
-    if(categoryDB) {
-        return res.status(400).json({
-            ok: false,
-            body: `La categoria ${categoryDB.nombre}, ya existe`
-        })
-    }
-
-    const fechaCreacion = new Date()    
+    const createDate = new Date()
+    
+    const estatusActivo = await obtenerEstatusActivo()
 
     //Generar la data a guardar
     const data = {
-        nombre,
-        userCreate: req.usuario.uid,
-        userModify: req.usuario.uid,
-        createDate: fechaCreacion,
-        modifyDate: fechaCreacion
+        nombre,                
+        fecha_creacion: createDate,
+        uid_estatus: estatusActivo._id       
     }
 
-    const category = new Category(data)
+    const category = new TipoProucto(data)
 
     await category.save()
 
-    return res.status(201).json({
+    return res.status(200).json({
         ok: true,
         body: `La cetegoria ${category.nombre} fue creada exitosamente`
     })
@@ -44,9 +32,9 @@ const createCategory = async (req, res = response) => {
     } catch (error) {
 
         res.status(500).json({
-            ok: false,            
-            body: 'Problemas al obtener los datos con el servidor',            
-        })
+            ok: false,
+            body: `Ocurrio un problema con el servidor, contacta con el administrador. ${error.message}`       
+        }) 
 
     }
 }
@@ -55,35 +43,57 @@ const createCategory = async (req, res = response) => {
 const getCategories = async (req, res = response) =>{
 
     try {
-        const query = {state: true}
+        // const query = {state: true}
 
-        let { limit, from} = req.query
+        // let { limit, from} = req.query
     
-        limit = limit === '' || limit === undefined ? 5 : Number(limit);
-        from = from === '' || from === undefined ? 0 : Number(from);
+        // limit = limit === '' || limit === undefined ? 5 : Number(limit);
+        // from = from === '' || from === undefined ? 0 : Number(from);
     
-        const [total, categories] = await Promise.all([
-            Category.countDocuments(query),
-            Category.find(query)
-                                .skip(Number(from))
-                                .limit(Number(limit))
-                                .populate('userCreate', 'nombre') 
-                                .populate('userModify', 'nombre')                                                                      
-        ])
+        // const [total, categories] = await Promise.all([
+        //     Category.countDocuments(query),
+        //     Category.find(query)
+        //                         .skip(Number(from))
+        //                         .limit(Number(limit))
+        //                         .populate('userCreate', 'nombre') 
+        //                         .populate('userModify', 'nombre')                                                                      
+        // ])
+
+        const categories = await TipoProucto.aggregate([{
+            $lookup: {
+                from: 'estatus',
+                localField: 'uid_estatus',
+                foreignField: '_id',
+                as: 'datos_estatus'
+            }
+        },
+        {
+            $unwid: '$datos_estatus'
+        },
+        {
+            $project: {
+                nombre: 1,
+                nombre_estatus: '$datos_estatus.nombre', // Asume que el campo del nombre del estatus es 'nombre'
+                fecha_creacion: 1,
+                uid: '$_id'
+              }
+        }
+    ])
+
+        console.log(categories);
+
+        
         
         res.json({
             ok: true,            
-            body: {
-                total,
-                categories
-            }
+            body: categories            
         })
 
     } catch (error) {
-        res.status(500).json({
-            ok: false,            
-            body: `Problemas al obtener los datos con el servidor ${error}`,            
-        })
+        res.json({
+            ok: false,
+            body: `Ocurrio un problema con el servidor, contacta con el administrador. ${error.message}`       
+        }) 
     }
 }
 
@@ -103,10 +113,10 @@ const getCategoryByID = async (req, res = response) => {
         })
 
     } catch(error) {
-        res.status(500).json({
-            ok: false,            
-            body: `Problemas al obtener los datos con el servidor ${error}`,            
-        })
+        res.json({
+            ok: false,
+            body: `Ocurrio un problema con el servidor, contacta con el administrador. ${error.message}`       
+        }) 
     }
 }
 
@@ -136,10 +146,10 @@ const updateCategoryByID = async (req, res = response) => {
         })
 
     } catch(error) {
-        res.status(500).json({
-            ok: false,            
-            body: `Problemas al obtener los datos con el servidor ${error}`,            
-        })
+        res.json({
+            ok: false,
+            body: `Ocurrio un problema con el servidor, contacta con el administrador. ${error.message}`       
+        }) 
     }
 }
 
@@ -166,10 +176,10 @@ const deleteCategoryByID = async (req, res = response) => {
         })
 
     } catch(error) {
-        res.status(500).json({
-            ok: false,            
-            body: `Problemas al obtener los datos con el servidor ${error}`,            
-        })
+        res.json({
+            ok: false,
+            body: `Ocurrio un problema con el servidor, contacta con el administrador. ${error.message}`       
+        }) 
     }
 }
 

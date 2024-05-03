@@ -2,7 +2,7 @@ const { Router } = require('express')
 const { check } = require('express-validator')
 
 const { validarJWT, validarCampos, esAdminRole } = require('../middlewares/index.middlewares')
-const { createCategory, getCategories, getCategoryByID, updateCategoryByID, deleteCategoryByID } = require('../controllers/category.controller')
+const { createCategory, getCategories, getCategoryByID, updateCategoryByID, deleteCategoryByID } = require('../controllers/tipo_producto.controller')
 const { existeIdTipoProducto, nombreTipoProductoExiste,  } = require('../helpers/db_validators.helpers')
 
 
@@ -28,6 +28,7 @@ router.get('/:id', [
 // Crear una categoria - privado - cualquier persona con un token valido
 router.post('/', [
     validarJWT,
+    esAdminRole,
     check('nombre', 'Es necesario un nombre para poder crear la cateogria').notEmpty(),
     check('nombre').custom(nombreTipoProductoExiste),
     validarCampos

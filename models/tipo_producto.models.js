@@ -30,4 +30,4 @@ TipoProductSchema.methods.toJSON = function () {
     return produto
 }
 
-module.exports = model('Product', TipoProductSchema) // Roles, verifica si la coleccion existe en mongodb y si no la crea
+module.exports = model('tipo_producto', TipoProductSchema) // Roles, verifica si la coleccion existe en mongodb y si no la crea
