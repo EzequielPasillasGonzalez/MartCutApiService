@@ -1,5 +1,5 @@
 const { response } = require('express')
-const { verificarRolAdministrador, verificarRolEmprendedor, verificarRolUsuario } = require('../helpers/db_validators.helpers')
+const { verificarRolAdministrador, verificarRolEmprendedor, verificarRolUsuario } = require('../helpers/index.helpers')
 
 const esAdminRole = async ( req, res = response, next) => {    
 

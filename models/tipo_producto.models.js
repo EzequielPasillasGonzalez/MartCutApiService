@@ -25,9 +25,9 @@ const TipoProductSchema = Schema({
 })
 
 TipoProductSchema.methods.toJSON = function () {
-    const {__v, _id, ...produto} = this.toObject()    
-    produto.uid = _id
-    return produto
+    const {__v, _id, ...tipoProducto} = this.toObject()    
+    tipoProducto.uid = _id    
+    return tipoProducto
 }
 
 module.exports = model('tipo_producto', TipoProductSchema) // Roles, verifica si la coleccion existe en mongodb y si no la crea

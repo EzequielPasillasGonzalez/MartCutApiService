@@ -1,10 +1,9 @@
 const { Router } = require('express')
 const { check } = require('express-validator')
 
-const { validarCampos, validarArchivoSubir } = require('../middlewares/index.middlewares')
+const { validarJWT, validarCampos, validarArchivoSubir } = require('../middlewares/index.middlewares')
 const { cargarArchivos, actualizarImagenUser, mostrarImagen, actualizarImagenCloudinary } = require('../controllers/uploads.controllers')
-const { validarJWT } = require('../middlewares/validar_jwt.middlewares')
-const { coleccionesPermitidas, existeID } = require('../helpers/db_validators.helpers')
+const { coleccionesPermitidas, existeID } = require('../helpers/index.helpers')
 
 
 const router = Router()

@@ -8,7 +8,7 @@ const { check } = require('express-validator')
 const { validarCampos, validarJWT, esAdminRole  } = require('../middlewares/index.middlewares')
 
 const { estatusGet, estatusPut, estatusPost } = require('../controllers/estatus.controllers')
-const { esRoleValido, emailExiste, existeIDEstatus, existeRol, existeEstatusNombre } = require('../helpers/db_validators.helpers')
+const { esRoleValido, emailExiste, existeIDEstatus, existeRol, existeEstatusNombre } = require('../helpers/index.helpers')
 
 
 

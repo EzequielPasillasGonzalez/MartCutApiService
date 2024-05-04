@@ -1,7 +1,7 @@
 const { response } = require('express')
 
 const { Role, Estatus } = require('../models/index.models')
-const { obtenerEstatusActivo, obtenerEstatusNombre } = require('../helpers/db_validators.helpers')
+const { obtenerEstatusActivo, obtenerEstatusNombre, getRole, existeIDRole, obtenerRolNombre, getRolById } = require('../helpers/index.helpers')
 
 const roleGet = async (req, res = response) =>{
 
@@ -20,9 +20,9 @@ const roleGet = async (req, res = response) =>{
     //     Role.find(state)
     //                     .skip(Number(from))
     //                     .limit(Number(limit))
-    // ])
-    
-    const role = await Role.find()
+    // ])        
+
+    const role = await getRole()
 
     res.json({
         ok: true,
@@ -32,6 +32,76 @@ const roleGet = async (req, res = response) =>{
         res.json({
             ok: false,
             body: error.message
+        })
+    }
+}
+
+const getRolByIDAll = async (req, res = response) => {
+    try {
+
+        const { id } = req.params
+
+        const category = await Role.findById(id)
+
+        res.json({
+            ok: true,
+            body: category
+        })
+
+    } catch (error) {
+        res.json({
+            ok: false,
+            body: `Ocurrio un problema con el servidor, contacta con el administrador. ${error.message}`
+        })
+    }
+}
+
+const getRolByNombreAll = async (req, res = response) => {
+    try {   
+        
+        const { nombre } = req.body
+
+        const rol = await obtenerRolNombre(nombre)
+
+        res.json({
+            ok: true,
+            body: rol
+        })
+
+    } catch (error) {
+        res.json({
+            ok: false,
+            body: `Ocurrio un problema con el servidor, contacta con el administrador. ${error.message}`
+        })
+    }
+}
+
+const getRolByNombre = async (req, res = response) => {
+    try {
+
+        const { nombre } = req.body
+
+        const rol = await obtenerRolNombre(nombre)
+        
+        let rolBuscado
+        if(rol){
+            rolBuscado = await getRolById(rol._id.toString())
+        }else {
+            res.json({
+                ok: false,
+                body: `Ocurrio un problema con el servidor, contacta con el administrador.`
+            })
+        }
+
+        res.json({
+            ok: true,
+            body: rolBuscado
+        })
+
+    } catch (error) {
+        res.json({
+            ok: false,
+            body: `Ocurrio un problema con el servidor, contacta con el administrador. ${error.message}`
         })
     }
 }
@@ -126,5 +196,8 @@ module.exports = {
     roleGet,
     rolePost,
     rolePut,
-    roleDelete
+    roleDelete,
+    getRolByNombre,
+    getRolByIDAll,
+    getRolByNombreAll
 }

@@ -1,7 +1,7 @@
 const { response } = require("express");
 
 const { Producto, Category } = require('../models/index.models');
-const { buscarCorreoUserModify, buscarCategoriaModificarProducto } = require("../helpers/db_validators.helpers");
+const { buscarCorreoUserModify, buscarCategoriaModificarProducto } = require("../helpers/index.helpers");
 
 const createProduct = async(req, res = response) =>{
     try {

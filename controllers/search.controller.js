@@ -1,6 +1,7 @@
 const { response } = require("express");
-const { extraerNombresCategoria } = require("../helpers/db_validators.helpers");
+const { extraerNombresCategoria } = require("../helpers/index.helpers");
 const { Usuario, Category, Role, Producto } = require("../models/index.models");
+
 const { ObjectId } = require('mongoose').Types
 
 const coleccionesPermitidas = [

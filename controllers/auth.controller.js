@@ -2,8 +2,7 @@ const {response} = require('express');
 const bcryptjs = require('bcryptjs');
 
 const { Usuario, Estatus } = require('../models/index.models')
-const { generarJWT } = require('../helpers/generarJWT.helpers');
-const { googleVerify } = require('../helpers/google_verify.helpers');
+const { generarJWT, googleVerify } = require('../helpers/index.helpers');
 
 const login = async (req, res = response) => {    
     const { correo, password } = req.body

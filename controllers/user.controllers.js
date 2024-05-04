@@ -1,27 +1,11 @@
 const { response } = require('express')
 const bcryptjs = require('bcryptjs')
 
-const {Usuario, Estatus, Role} = require('../models/index.models')
-const { obtenerRolUsuario, obtenerEstatusActivo, existeIdUsuario, obtenerRolEmprendedor, celularExiste, getUsuarios, obtenerEstatusInactivo, obtenerEstatusPausado, obtenerEstatusNombre } = require('../helpers/db_validators.helpers')
+const {Usuario } = require('../models/index.models')
+const { obtenerRolUsuario, obtenerEstatusActivo, existeIdUsuario, obtenerRolEmprendedor, celularExiste, getUsuarios, obtenerEstatusInactivo, obtenerEstatusPausado, obtenerEstatusNombre } = require('../helpers/index.helpers')
 
 
 const usuariosGet = async (req, res = response) => {
-    
-    // const query = {state: true} //? Es para contar los que estan activos
-
-    // let { limit, from} = req.query
-
-    // // Verificar y asignar valores predeterminados si son cadenas vacías o no están definidos
-    // limit = limit === '' || limit === undefined ? 5 : Number(limit);
-    // from = from === '' || from === undefined ? 0 : Number(from);
-
-    // const [total, user] = await Promise.all([
-    //     Usuario.countDocuments(query), //? Buscan solo los que estan activos
-    //     Usuario.find(query)
-    //                     .skip(Number(from))
-    //                     .limit(Number(limit))
-    // ])
-
     const usuarios = await getUsuarios()
 
     res.json({

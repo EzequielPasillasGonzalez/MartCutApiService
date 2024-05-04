@@ -1,7 +1,7 @@
 const { response } = require('express')
 
 const { Estatus } = require('../models/index.models')
-const { getEstaus } = require('../helpers/db_validators.helpers')
+const { getEstaus } = require('../helpers/index.helpers')
 
 
 const estatusGet = async (req, res = response) => {

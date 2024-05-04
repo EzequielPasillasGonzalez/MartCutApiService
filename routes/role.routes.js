@@ -1,41 +1,60 @@
 const { Router } = require('express');
 const { check } = require('express-validator')
 
-const { roleGet, rolePost, rolePut, roleDelete } = require('../controllers/roles.controller');
+const { roleGet, rolePost, rolePut, roleDelete, getRolByNombre, getRolByIDAll, getRolByNombreAll } = require('../controllers/roles.controller');
 
 const { validarJWT, esAdminRole, validarCampos } = require('../middlewares/index.middlewares');
-const { existeRol, existeIDRole } = require('../helpers/db_validators.helpers');
+const { existeRol, existeIDRole } = require('../helpers/index.helpers');
 
 const router = Router()
 
 router.get('/', roleGet)
 
-router.post('/', [
-                validarJWT,
-                esAdminRole,                
-                check('nombre').custom(existeRol),                
-                validarCampos
-                ],
-                rolePost)
+router.get('/buscarPorNombre/',
+    [
+        check('nombre', 'Es necesario un nombre para poder buscar la cateogria').notEmpty(),
+    ],
+    getRolByNombre)
 
-router.put('/:id', [     
-                    validarJWT,                    
-                    esAdminRole,               
-                    check('id', 'Se necesita un ID para actualizar').notEmpty(),
-                    check('id', 'No es un ID valido').isMongoId(),
-                    check('id').custom(existeIDRole),
-                    check('nombre', 'Se necesita el nuevo nombre').notEmpty(),
-                    check('nombre').custom(existeRol),                                        
-                    validarCampos
-                    ], rolePut)     
-                    
+router.get('/buscarPorNombreAll/',
+    [
+        check('nombre', 'Es necesario un nombre para poder buscar la cateogria').notEmpty(),
+    ],
+    getRolByNombreAll)
+
+router.post('/', [
+    validarJWT,
+    esAdminRole,
+    check('nombre').custom(existeRol),
+    validarCampos
+],
+    rolePost)
+
+router.get('/buscarPorIdAll/:id', [
+    check('id', 'El ID es necesario para la búsqueda especializada').notEmpty(),
+    check('id', 'El ID no es validio').isMongoId(),
+    check('id').custom(existeIDRole),
+    validarCampos
+], getRolByIDAll)
+
+router.put('/:id', [
+    validarJWT,
+    esAdminRole,
+    check('id', 'Se necesita un ID para actualizar').notEmpty(),
+    check('id', 'No es un ID valido').isMongoId(),
+    check('id').custom(existeIDRole),
+    check('nombre', 'Se necesita el nuevo nombre').notEmpty(),
+    check('nombre').custom(existeRol),
+    validarCampos
+], rolePut)
+
 router.delete('/:id', [
-                        validarJWT,                    
-                        esAdminRole, 
-                        check('id', 'Se necesita un ID para actualizar').notEmpty(),
-                        check('id', 'No es un ID valido').isMongoId(),
-                        check('id').custom(existeIDRole),
-                        validarCampos
-                        ], roleDelete)
+    validarJWT,
+    esAdminRole,
+    check('id', 'Se necesita un ID para actualizar').notEmpty(),
+    check('id', 'No es un ID valido').isMongoId(),
+    check('id').custom(existeIDRole),
+    validarCampos
+], roleDelete)
 
 module.exports = router

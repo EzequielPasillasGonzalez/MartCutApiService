@@ -3,7 +3,7 @@ const { check } = require('express-validator')
 
 const { validarJWT, validarCampos, esAdminRole } = require('../middlewares/index.middlewares')
 const { createProduct, getProducts, getProductById, updateProduct, deleteProduct, updateProductList } = require('../controllers/products.controllers')
-const { nombreTipoProductoExisteProduct, existeIDProduct } = require('../helpers/db_validators.helpers')
+const { nombreTipoProductoExisteProduct, existeIDProduct } = require('../helpers/index.helpers')
 
 
 const router = Router()
