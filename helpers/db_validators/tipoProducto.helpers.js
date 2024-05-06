@@ -14,8 +14,6 @@ const getTipoProductoById = async (id) => {
                     _id: new ObjectId(id) // Usa 'new' para crear una nueva instancia de ObjectId
                 }
             },
-
-
             {
                 $lookup: {
                     from: "estatus",
@@ -25,12 +23,22 @@ const getTipoProductoById = async (id) => {
                 },
             },
             {
+                $lookup: {
+                    from: "usuarios",
+                    localField: "uid_modificado_por",
+                    foreignField: "_id",
+                    as: "modificado_por",
+                },
+            },
+            {
                 $project: {
                     nombre: 1,
                     _id: 0,
                     uid: "$_id",
                     nombre_estatus: { $arrayElemAt: ["$datos_estatus.nombre", 0] }, // Asume que el campo del nombre del estatus es 'nombre'                            
                     uid_estatus: { $arrayElemAt: ["$datos_estatus._id", 0] },
+                    modificado_por: { $arrayElemAt: ["$modificado_por.nombre", 0] },
+                    uid_modificado_por: { $arrayElemAt: ["$modificado_por._id", 0] }
                 },
             },
         ])
@@ -56,12 +64,22 @@ const getTipoProducto = async () => {
                 },
             },
             {
+                $lookup: {
+                    from: "usuarios",
+                    localField: "uid_modificado_por",
+                    foreignField: "_id",
+                    as: "modificado_por",
+                },
+            },
+            {
                 $project: {
                     nombre: 1,
                     _id: 0,
                     uid: "$_id",
                     nombre_estatus: { $arrayElemAt: ["$datos_estatus.nombre", 0] }, // Asume que el campo del nombre del estatus es 'nombre'                            
                     uid_estatus: { $arrayElemAt: ["$datos_estatus._id", 0] },
+                    modificado_por: { $arrayElemAt: ["$modificado_por.nombre", 0] },
+                    uid_modificado_por: { $arrayElemAt: ["$modificado_por._id", 0] }
                 },
             },
         ])

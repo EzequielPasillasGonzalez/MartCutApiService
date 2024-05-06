@@ -16,8 +16,16 @@ const getRole = async () => {
             localField: "uid_estatus",
             foreignField: "_id",
             as: "datos_estatus",
-          },
+          },          
         },
+        {
+          $lookup: {
+              from: "usuarios",
+              localField: "uid_modificado_por",
+              foreignField: "_id",
+              as: "modificado_por",
+          },
+      },
         {
           $project: {
             nombre: 1,
@@ -25,6 +33,8 @@ const getRole = async () => {
             _id: 0,
             uid: "$_id",
             uid_estatus: { $arrayElemAt: ["$datos_estatus._id", 0] },
+            modificado_por: { $arrayElemAt: ["$modificado_por.nombre", 0] },
+            uid_modificado_por: { $arrayElemAt: ["$modificado_por._id", 0] }
           },
         },
       ])
@@ -56,12 +66,22 @@ const getRole = async () => {
           },
         },
         {
+          $lookup: {
+              from: "usuarios",
+              localField: "uid_modificado_por",
+              foreignField: "_id",
+              as: "modificado_por",
+          },
+      },
+        {
           $project: {
             nombre: 1,
             _id: 0,
             uid: "$_id",
             nombre_estatus: { $arrayElemAt: ["$datos_estatus.nombre", 0] }, // Asume que el campo del nombre del estatus es 'nombre'                            
             uid_estatus: { $arrayElemAt: ["$datos_estatus._id", 0] },
+            modificado_por: { $arrayElemAt: ["$modificado_por.nombre", 0] },
+            uid_modificado_por: { $arrayElemAt: ["$modificado_por._id", 0] }
           },
         },
       ])
