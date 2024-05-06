@@ -2,16 +2,120 @@ const { response } = require('express')
 const bcryptjs = require('bcryptjs')
 
 const {Usuario } = require('../models/index.models')
-const { obtenerRolUsuario, obtenerEstatusActivo, existeIdUsuario, obtenerRolEmprendedor, celularExiste, getUsuarios, obtenerEstatusInactivo, obtenerEstatusPausado, obtenerEstatusNombre } = require('../helpers/index.helpers')
+const { getUsuariosId, obtenerRolUsuario, obtenerEstatusActivo, existeIdUsuario, obtenerRolEmprendedor, celularExiste, getUsuarios, obtenerEstatusInactivo, obtenerEstatusPausado, obtenerEstatusNombre } = require('../helpers/index.helpers')
+const { buscarCorreoUserModify, getUsuariosNombre } = require('../helpers/db_validators/usuario.helpers')
 
 
 const usuariosGet = async (req, res = response) => {
-    const usuarios = await getUsuarios()
+    try {
+        const usuarios = await getUsuarios()
 
-    res.json({
-        ok: true,         
-        body: usuarios,        
-    })
+        res.json({
+            ok: true,         
+            body: usuarios,        
+        })    
+    } catch(error) {
+        res.json({
+            ok: false,
+            body: error.message
+        })
+    }
+    
+}
+
+const usuariosGetId = async (req, res = response) => {
+    try {        
+        const {id} = req.params        
+        const usuarios = await getUsuariosId(id)
+
+        res.json({
+            ok: true,         
+            body: usuarios,        
+        })    
+    } catch(error) {
+        res.json({
+            ok: false,
+            body: error.message
+        })
+    }
+}
+
+const usuariosGetCorreo = async (req, res = response) => {
+    try {        
+        const {correo} = req.body
+        
+        const usuarioBuscado = await buscarCorreoUserModify(correo)        
+
+        const usuarios = await getUsuariosId(usuarioBuscado._id)
+
+        res.json({
+            ok: true,         
+            body: usuarios,        
+        })    
+    } catch(error) {
+        res.json({
+            ok: false,
+            body: error.message
+        })
+    }
+}
+
+const usuariosGetNombre = async (req, res = response) => {
+    try {        
+        const {nombre} = req.body
+        
+        const usuarioBuscado = await getUsuariosNombre(nombre)
+
+        res.json({
+            ok: true,         
+            body: usuarioBuscado,        
+        })    
+    } catch(error) {
+        res.json({
+            ok: false,
+            body: error.message
+        })
+    }
+}
+
+const usuariosPutIDCambiarPassword = async (req, res = response) => {
+    try {        
+
+        const {id} = req.params
+
+        const {password, ...resto} = req.body                
+        
+        if(password.length >= 8){
+    
+            const salt = bcryptjs.genSaltSync()
+            resto.password = bcryptjs.hashSync(password, salt)        
+        }else{
+            res.json({
+                ok: false,
+                body: 'La contraseña no cumple los requerimientos minimos'
+            })
+        }
+
+        const fecha_modificacion = new Date()
+
+        const uid_modificado_por = req.usuario.uid
+    
+        resto.fecha_modificacion = fecha_modificacion          
+        
+        resto.uid_modificado_por = uid_modificado_por
+
+        const usuario = await Usuario.findByIdAndUpdate(id, resto, {new : true})
+
+        res.json({
+            ok: true,         
+            body: usuario,        
+        })    
+    } catch(error) {
+        res.json({
+            ok: false,
+            body: error.message
+        })
+    }
 }
 
 const usuariosPut = async (req, res = response) => {
@@ -201,7 +305,11 @@ const usuariosPatch = (req, res = response) => {
 
 module.exports = {
     usuariosGet,
+    usuariosGetCorreo,
+    usuariosGetId,
+    usuariosGetNombre,
     usuariosPut,
+    usuariosPutIDCambiarPassword,
     usuariosPost,
     usuariosDelete,
     usuariosPatch,

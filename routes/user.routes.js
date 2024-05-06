@@ -4,7 +4,7 @@ const { check } = require('express-validator')
 
 const { validarCampos, validarJWT, esAdminRole, esUsuarioRolRecursivo } = require('../middlewares/index.middlewares')
 
-const { usuariosGet, usuariosPut, usuariosPost, usuariosDelete, usuariosPatch, usuariosAltaEmprendedor, usuariosBaja } = require('../controllers/user.controllers')
+const { usuariosGet, usuariosPut, usuariosPost, usuariosDelete, usuariosPatch, usuariosAltaEmprendedor, usuariosBaja, usuariosGetId, usuariosGetCorreo, usuariosPutIDCambiarPassword, usuariosGetNombre } = require('../controllers/user.controllers')
 const { emailExiste, existeIdUsuario, celularExiste } = require('../helpers/index.helpers')
 
 
@@ -13,6 +13,26 @@ const router = Router()
 
 router.get('/', usuariosGet) //? Se manda a llamar desde los controladores
 
+router.get('/buscarNombre', [        //? Para enviar parametros dinamicos    
+    check('nombre', 'El nombre es obligatorio').not().isEmpty(),    
+    validarCampos, // Es para que no truene el programa y lance los errores encontrados    
+], usuariosGetNombre)
+
+router.get('/buscarCorreo', [        //? Para enviar parametros dinamicos    
+    check('correo', 'El correo es obligatorio').not().isEmpty(),
+    check('correo', 'El correo no es valido').isEmail(),    
+    validarCampos, // Es para que no truene el programa y lance los errores encontrados    
+], usuariosGetCorreo)
+
+
+router.get('/:id', [        //? Para enviar parametros dinamicos    
+    check('id', 'No es un ID valido').isMongoId(),
+    check('id').custom(existeIdUsuario),  
+    validarCampos, // Es para que no truene el programa y lance los errores encontrados    
+], usuariosGetId)
+
+
+
 router.put('/:id', [        //? Para enviar parametros dinamicos
     validarJWT,
     check('id', 'No es un ID valido').isMongoId(),
@@ -20,6 +40,13 @@ router.put('/:id', [        //? Para enviar parametros dinamicos
     esUsuarioRolRecursivo,      
     validarCampos, // Es para que no truene el programa y lance los errores encontrados    
 ], usuariosPut)
+
+router.put('/recuperarPassword/:id', [        //? Para enviar parametros dinamicos
+    validarJWT,
+    check('id', 'No es un ID valido').isMongoId(),
+    check('id').custom(existeIdUsuario),    
+    validarCampos, // Es para que no truene el programa y lance los errores encontrados    
+], usuariosPutIDCambiarPassword)
 
 router.put('/emprendedor/:id', [        //? Para enviar parametros dinamicos
     validarJWT,
