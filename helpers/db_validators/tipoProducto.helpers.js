@@ -130,15 +130,18 @@ const idTipoProductoExiste = async (id = "") => {
 
 const nombreTipoProductoExiste = async (nombre = "") => {
     try {
-        const regex = new RegExp(nombre, "i");
+        if (nombre) {
+            const regex = new RegExp(nombre, "i");
 
-        const existsnombre = await TipoProucto.findOne({ nombre: regex });
+            const existsnombre = await TipoProucto.findOne({ nombre: regex });
 
-        if (existsnombre) {
-            throw new Error(`La categoria ${nombre} ya existe en la base de datos`);
+            if (existsnombre) {
+                throw new Error(`La categoria ${nombre} ya existe en la base de datos`);
+            }
+
+            return true;
         }
 
-        return true;
     } catch (error) {
         throw new Error(
             `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`

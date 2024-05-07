@@ -18,6 +18,7 @@ class Server {
             uploads        : '/api/uploads',
             usuario        : '/api/usuario',
             emprendimiento : '/api/emprendimiento',
+            tipoEmprendimiento : '/api/tipoEmprendimiento',
             centroUniversitario: '/api/centroUniversitario',
             estatus: '/api/estatus'
         }
@@ -64,7 +65,8 @@ class Server {
         this.app.use(this.paths.autenticar, require('../routes/auth.routes'))
         // this.app.use(this.paths.buscar, require('../routes/search.routes'))
         this.app.use(this.paths.tipoProducto, require('../routes/tipo_producto.routes'))
-        // //this.app.use(this.paths.emprendimiento, require('../routes/user.routes'))
+        this.app.use(this.paths.tipoEmprendimiento, require('../routes/tipo_emprendimiento.routes'))
+        //this.app.use(this.paths.emprendimiento, require('../routes/user.routes'))
         // this.app.use(this.paths.productos, require('../routes/products.routes'))
         this.app.use(this.paths.rol, require('../routes/role.routes'))
         // this.app.use(this.paths.uploads, require('../routes/uploads.routes'))

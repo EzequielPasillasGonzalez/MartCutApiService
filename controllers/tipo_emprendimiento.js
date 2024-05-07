@@ -1,9 +1,11 @@
-  const { response } = require("express");
+const { response } = require("express");
 
-const { TipoProucto } = require('../models/index.models');
-const { obtenerEstatusActivo, getTipoProducto, getTipoProductoById, nombreTipoProductoExisteProduct, obtenerEstatusNombre } = require("../helpers/index.helpers");
+const { TipoEmprendimiento } = require('../models/index.models');
+const { obtenerEstatusNombre, buscarNombreTipoEmprendimiento, obtenerEstatusInactivo, obtenerEstatusActivo, getTipoEmprendimiento } = require("../helpers/index.helpers");
+const { getTipoEmprendimientoById } = require("../helpers/db_validators/tipoEmprendimiento.helpers");
 
-const createCategory = async (req, res = response) => {
+
+const createTipoEmprendimiento = async (req, res = response) => {
 
     try {
 
@@ -20,13 +22,13 @@ const createCategory = async (req, res = response) => {
             uid_estatus: estatusActivo._id
         }
 
-        const category = new TipoProucto(data)
+        const category = new TipoEmprendimiento(data)
 
         await category.save()
 
         return res.status(200).json({
             ok: true,
-            body: `La cetegoria ${category.nombre} fue creada exitosamente`
+            body: `El tipo de emprendimiento ${category.nombre} fue creada exitosamente`
         })
 
     } catch (error) {
@@ -39,17 +41,16 @@ const createCategory = async (req, res = response) => {
     }
 }
 
-// Obtenercategorias - paginado - total - populate / Para que obtenga los datos del usario
-const getCategories = async (req, res = response) => {
+const getTiposEmprendimiento = async (req, res = response) => {
 
     try {
         
 
-        const tipoProducto = await getTipoProducto()
+        const tipoEmprendimiento = await getTipoEmprendimiento()
 
         res.json({
             ok: true,
-            body: tipoProducto
+            body: tipoEmprendimiento
         })
 
     } catch (error) {
@@ -60,57 +61,16 @@ const getCategories = async (req, res = response) => {
     }
 }
 
-// Obtenercategoria - populate
-const getCategoryByID = async (req, res = response) => {
-    try {
-
-        const { id } = req.params
-
-        const category = await getTipoProductoById(id)
-
-        res.json({
-            ok: true,
-            body: category
-        })
-
-    } catch (error) {
-        res.json({
-            ok: false,
-            body: `Ocurrio un problema con el servidor, contacta con el administrador. ${error.message}`
-        })
-    }
-}
-
-const getCategoryByIDAll = async (req, res = response) => {
-    try {
-
-        const { id } = req.params
-
-        const category = await TipoProucto.findById(id)
-
-        res.json({
-            ok: true,
-            body: category
-        })
-
-    } catch (error) {
-        res.json({
-            ok: false,
-            body: `Ocurrio un problema con el servidor, contacta con el administrador. ${error.message}`
-        })
-    }
-}
-
-const getCategoryByNombre = async (req, res = response) => {
+const getTipoEmprendimientoByNombre = async (req, res = response) => {
     try {
 
         const { nombre } = req.body
 
-        const category = await nombreTipoProductoExisteProduct(nombre)
+        const tipoEmprendimiento = await buscarNombreTipoEmprendimiento(nombre)
         
-        let categoria
-        if(category){
-            categoria = await getTipoProductoById(category._id.toString())
+        let categoriaTipoEmprendimiento
+        if(tipoEmprendimiento){
+            categoriaTipoEmprendimiento = await getTipoEmprendimientoById(tipoEmprendimiento._id.toString())
         }else {
             res.json({
                 ok: false,
@@ -120,7 +80,7 @@ const getCategoryByNombre = async (req, res = response) => {
 
         res.json({
             ok: true,
-            body: categoria
+            body: categoriaTipoEmprendimiento
         })
 
     } catch (error) {
@@ -131,16 +91,35 @@ const getCategoryByNombre = async (req, res = response) => {
     }
 }
 
-const getCategoryByNombreAll = async (req, res = response) => {
+const getTipoEmprendimientoByNombreAll = async (req, res = response) => {
     try {
 
         const { nombre } = req.body
 
-        const category = await nombreTipoProductoExisteProduct(nombre)
+        const tipoEmprendimiento = await buscarNombreTipoEmprendimiento(nombre)
 
         res.json({
             ok: true,
-            body: category
+            body: tipoEmprendimiento
+        })
+
+    } catch (error) {
+        res.json({
+            ok: false,
+            body: `Ocurrio un problema con el servidor, contacta con el administrador. ${error.message}`
+        })
+    }
+}
+const getTipoEmprendimientoByID = async (req, res = response) => {
+    try {
+
+        const { id } = req.params
+
+        const tipoEmprendimiento = await getTipoEmprendimientoById(id)
+
+        res.json({
+            ok: true,
+            body: tipoEmprendimiento
         })
 
     } catch (error) {
@@ -151,8 +130,27 @@ const getCategoryByNombreAll = async (req, res = response) => {
     }
 }
 
-// Actualizar categoria - recibes ID - y cambias nombre
-const updateCategoryByID = async (req, res = response) => {
+const getTipoEmprendimientoByIDAll = async (req, res = response) => {
+    try {
+
+        const { id } = req.params
+
+        const tipoEmprendimiento = await TipoEmprendimiento.findById(id)
+
+        res.json({
+            ok: true,
+            body: tipoEmprendimiento
+        })
+
+    } catch (error) {
+        res.json({
+            ok: false,
+            body: `Ocurrio un problema con el servidor, contacta con el administrador. ${error.message}`
+        })
+    }
+}
+
+const updateTipoEmprendimientoByID = async (req, res = response) => {
     try {
 
         const { id } = req.params
@@ -167,11 +165,11 @@ const updateCategoryByID = async (req, res = response) => {
         // datos.modifyDate = modifyDate
         // datos.userModify = usuario
 
-        const category = await TipoProucto.findByIdAndUpdate(id, { uid_modificado_por, fecha_creacion, nombre }, {new: true})            
+        const tipoEmprendimiento = await TipoEmprendimiento.findByIdAndUpdate(id, { uid_modificado_por, fecha_creacion, nombre }, {new: true})            
 
         let tipoID
-        if(category){
-            tipoID = await getTipoProductoById(id)
+        if(tipoEmprendimiento){
+            tipoID = await getTipoEmprendimientoById(id)
         }else{
             res.json({
                 ok: false,
@@ -192,7 +190,7 @@ const updateCategoryByID = async (req, res = response) => {
     }
 }
 
-const deleteCategoryByID = async (req, res = response) => {
+const deleteTipoEmprendimientoByID = async (req, res = response) => {
     try {            
 
         const { id } = req.params
@@ -203,11 +201,11 @@ const deleteCategoryByID = async (req, res = response) => {
 
         const estatusBuscado = await obtenerEstatusNombre(estatus)                
 
-        const category = await TipoProucto.findByIdAndUpdate(id, { uid_estatus: estatusBuscado._id, fecha_modificacion, uid_modificado_por }, {new: true})
+        const tipoEmprendimiento = await TipoEmprendimiento.findByIdAndUpdate(id, { uid_estatus: estatusBuscado._id, fecha_modificacion, uid_modificado_por }, {new: true})
 
         res.json({
             ok: true,
-            body: category
+            body: tipoEmprendimiento
         })
 
     } catch (error) {
@@ -220,12 +218,12 @@ const deleteCategoryByID = async (req, res = response) => {
 
 
 module.exports = {
-    createCategory,
-    getCategories,
-    getCategoryByID,
-    updateCategoryByID,
-    deleteCategoryByID,
-    getCategoryByNombre,
-    getCategoryByNombreAll,
-    getCategoryByIDAll
+    createTipoEmprendimiento,
+    getTiposEmprendimiento,
+    getTipoEmprendimientoByNombre,
+    getTipoEmprendimientoByNombreAll,
+    getTipoEmprendimientoByID,
+    getTipoEmprendimientoByIDAll,
+    updateTipoEmprendimientoByID,
+    deleteTipoEmprendimientoByID
 }

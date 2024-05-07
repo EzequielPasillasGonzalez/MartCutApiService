@@ -2,9 +2,11 @@ const { Router } = require('express')
 const { check } = require('express-validator')
 
 const { validarJWT, validarCampos, esAdminRole } = require('../middlewares/index.middlewares')
-const { createCategory, getCategories, getCategoryByID, updateCategoryByID, deleteCategoryByID, getCategoryByNombre, getCategoryByNombreAll, getCategoryByIDAll } = require('../controllers/tipo_producto.controller')
-const { existeEstatusNombre, existeIdTipoProducto, nombreTipoProductoExiste, } = require('../helpers/index.helpers')
+const { existeEstatusNombre, existeIdTipoEmprendimiento, verificarExisteNombreTipoEmprendimiento } = require('../helpers/index.helpers')
+const { createTipoEmprendimiento, getTiposEmprendimiento, getTipoEmprendimientoByNombre, getTipoEmprendimientoByNombreAll, getTipoEmprendimientoByID, getTipoEmprendimientoByIDAll, updateTipoEmprendimientoByID, deleteTipoEmprendimientoByID } = require('../controllers/tipo_emprendimiento')
 const { verficiarEstatusNombre } = require('../helpers/db_validators/estatus.helpers')
+
+
 
 
 const router = Router()
@@ -15,58 +17,64 @@ const router = Router()
  */
 
 // Obtener todas las categorias - publico
-router.get('/', getCategories)
+router.get('/', getTiposEmprendimiento)
 
 router.get('/buscarPorNombre/',
     [
         check('nombre', 'Es necesario un nombre para poder buscar la cateogria').notEmpty(),
         validarCampos
     ],
-    getCategoryByNombre)
+    getTipoEmprendimientoByNombre)
+
+router.get('/buscarPorNombre/',
+    [
+        check('nombre', 'Es necesario un nombre para poder buscar el tipo de emprendimiento').notEmpty(),
+    ],
+    getTipoEmprendimientoByNombre)
 
 router.get('/buscarPorNombreAll/',
     [
         validarJWT,
         esAdminRole,
-        check('nombre', 'Es necesario un nombre para poder buscar la cateogria').notEmpty(),
+        check('nombre', 'Es necesario un nombre para poder buscar el tipo de emprendimiento').notEmpty(),
     ],
-    getCategoryByNombreAll)
+    getTipoEmprendimientoByNombreAll)
 
-// Obtener una categoria por id - publico
 router.get('/:id', [
     check('id', 'El ID es necesario para la búsqueda especializada').notEmpty(),
     check('id', 'El ID no es validio').isMongoId(),
-    check('id').custom(existeIdTipoProducto),
+    check('id').custom(existeIdTipoEmprendimiento),
     validarCampos
-], getCategoryByID)
+], getTipoEmprendimientoByID)
 
 router.get('/buscarPorIdAll/:id', [
     validarJWT,
     esAdminRole,
     check('id', 'El ID es necesario para la búsqueda especializada').notEmpty(),
     check('id', 'El ID no es validio').isMongoId(),
-    check('id').custom(existeIdTipoProducto),
+    check('id').custom(existeIdTipoEmprendimiento),
     validarCampos
-], getCategoryByIDAll)
+], getTipoEmprendimientoByIDAll)
 
 router.post('/', [
     validarJWT,
     esAdminRole,
-    check('nombre', 'Es necesario un nombre para poder crear la cateogria').notEmpty(),
-    check('nombre').custom(nombreTipoProductoExiste),
+    check('nombre', 'Es necesario un nombre para poder crear el tipo de emprendimiento').notEmpty(),
+    check('nombre').custom(verificarExisteNombreTipoEmprendimiento),
     validarCampos
-], createCategory)
+], createTipoEmprendimiento)
+
 
 router.put('/:id', [
     validarJWT,
     esAdminRole,
     check('id', 'El ID es necesario para la modificacion').notEmpty(),
     check('id', 'El ID no es validio').isMongoId(),
-    check('id').custom(existeIdTipoProducto),
+    check('id').custom(existeIdTipoEmprendimiento),
     check('nombre', 'Es necesario un nombre para poder buscar el tipo de emprendimiento').notEmpty(),
-    check('nombre').custom(nombreTipoProductoExiste),
+    check('nombre').custom(verificarExisteNombreTipoEmprendimiento),
     validarCampos
-], updateCategoryByID)
+], updateTipoEmprendimientoByID)
 
 // Borrar una categoria - Admin - cualquier persona con un token valido
 router.delete('/:id', [
@@ -74,10 +82,10 @@ router.delete('/:id', [
     esAdminRole,
     check('id', 'El ID es necesario para la modificacion').notEmpty(),
     check('id', 'El ID no es validio').isMongoId(),
-    check('id').custom(existeIdTipoProducto),
+    check('id').custom(existeIdTipoEmprendimiento),
     check('estatus', 'Es necesario un estatus para poder modificar el tipo de emprendimiento').notEmpty(),
     check('estatus').custom(verficiarEstatusNombre),
     validarCampos
-], deleteCategoryByID)
+], deleteTipoEmprendimientoByID)
 
 module.exports = router
