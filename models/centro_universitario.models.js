@@ -13,8 +13,10 @@ const CentrosUniversitariosSchema = Schema({
     },
     domicilio: {
         type: String,
-        required: [true, 'El domicilio del Centro Universitario es obligatorio'],
-        unique: true
+        required: [true, 'El domicilio del Centro Universitario es obligatorio'],        
+    },
+    url_img: {
+        type: String,
     },
     uid_estatus: {
         type: Schema.Types.ObjectId,

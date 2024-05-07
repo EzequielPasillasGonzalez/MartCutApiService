@@ -5,6 +5,10 @@ const EmprendimientoSchema = Schema({
         type: String,
         required: [true, 'El nombre es obligatorio'],        
     },
+    uid_usuario_emprendedor: {
+        type: Schema.Types.ObjectId,
+        ref: 'Usuario'
+    },
     uid_tipo_entrega: [{
         type: Schema.Types.ObjectId,
         ref: 'Tipo_entrega'

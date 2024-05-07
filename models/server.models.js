@@ -19,7 +19,7 @@ class Server {
             usuario        : '/api/usuario',
             emprendimiento : '/api/emprendimiento',
             tipoEmprendimiento : '/api/tipoEmprendimiento',
-            centroUniversitario: '/api/centroUniversitario',
+            centrosUniversitarios: '/api/centrosUniversitarios',
             estatus: '/api/estatus'
         }
 
@@ -72,7 +72,7 @@ class Server {
         // this.app.use(this.paths.uploads, require('../routes/uploads.routes'))
         this.app.use(this.paths.usuario, require('../routes/user.routes'))
         this.app.use(this.paths.estatus, require('../routes/estatus.routes'))
-        //this.app.use(this.paths.centroUniversitario, require('../routes/user.routes'))
+        this.app.use(this.paths.centrosUniversitarios, require('../routes/centros_universitarios.routes'))
     }
 
     listen() {

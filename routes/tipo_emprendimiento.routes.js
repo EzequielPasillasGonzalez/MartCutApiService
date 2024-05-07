@@ -3,7 +3,7 @@ const { check } = require('express-validator')
 
 const { validarJWT, validarCampos, esAdminRole } = require('../middlewares/index.middlewares')
 const { existeEstatusNombre, existeIdTipoEmprendimiento, verificarExisteNombreTipoEmprendimiento } = require('../helpers/index.helpers')
-const { createTipoEmprendimiento, getTiposEmprendimiento, getTipoEmprendimientoByNombre, getTipoEmprendimientoByNombreAll, getTipoEmprendimientoByID, getTipoEmprendimientoByIDAll, updateTipoEmprendimientoByID, deleteTipoEmprendimientoByID } = require('../controllers/tipo_emprendimiento')
+const { createTipoEmprendimiento, getTiposEmprendimiento, getTipoEmprendimientoByNombre, getTipoEmprendimientoByNombreAll, getTipoEmprendimientoByID, getTipoEmprendimientoByIDAll, updateTipoEmprendimientoByID, deleteTipoEmprendimientoByID } = require('../controllers/tipo_emprendimiento.controllers')
 const { verficiarEstatusNombre } = require('../helpers/db_validators/estatus.helpers')
 
 
