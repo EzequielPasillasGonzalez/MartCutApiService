@@ -5,7 +5,8 @@ const { check } = require('express-validator')
 const { validarCampos, validarJWT, esAdminRole, esUsuarioRolRecursivo } = require('../middlewares/index.middlewares')
 
 const { usuariosGet, usuariosPut, usuariosPost, usuariosDelete, usuariosPatch, usuariosAltaEmprendedor, usuariosBaja, usuariosGetId, usuariosGetCorreo, usuariosPutIDCambiarPassword, usuariosGetNombre } = require('../controllers/user.controllers')
-const { emailExiste, existeIdUsuario, celularExiste } = require('../helpers/index.helpers')
+const { verficiarEstatusNombre, emailExiste, existeIdUsuario, celularExiste } = require('../helpers/index.helpers')
+
 
 
 
@@ -81,6 +82,8 @@ router.delete('/:id', [
     check('id', 'Se necesita un ID para actualizar').notEmpty(),
     check('id', 'No es un ID valido').isMongoId(),
     check('id').custom(existeIdUsuario),
+    check('estatus', 'Es necesario un estatus para poder modificar el tipo de emprendimiento').notEmpty(),
+    check('estatus').custom(verficiarEstatusNombre),
     validarCampos
 ], usuariosDelete)
 
@@ -91,6 +94,7 @@ router.delete('/baja/:id', [
     check('id', 'Se necesita un ID para actualizar').notEmpty(),
     check('id', 'No es un ID valido').isMongoId(),
     check('id').custom(existeIdUsuario),
+
     validarCampos
 ], usuariosBaja)
 

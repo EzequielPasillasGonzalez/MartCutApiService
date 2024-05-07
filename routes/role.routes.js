@@ -4,7 +4,8 @@ const { check } = require('express-validator')
 const { roleGet, rolePost, rolePut, roleDelete, getRolByNombre, getRolByIDAll, getRolByNombreAll } = require('../controllers/roles.controller');
 
 const { validarJWT, esAdminRole, validarCampos } = require('../middlewares/index.middlewares');
-const { existeRol, existeIDRole } = require('../helpers/index.helpers');
+const { verficiarEstatusNombre, existeRol, existeIDRole } = require('../helpers/index.helpers');
+
 
 const router = Router()
 
@@ -54,6 +55,8 @@ router.delete('/:id', [
     check('id', 'Se necesita un ID para actualizar').notEmpty(),
     check('id', 'No es un ID valido').isMongoId(),
     check('id').custom(existeIDRole),
+    check('estatus', 'Es necesario un estatus para poder modificar el tipo de emprendimiento').notEmpty(),
+    check('estatus').custom(verficiarEstatusNombre),
     validarCampos
 ], roleDelete)
 

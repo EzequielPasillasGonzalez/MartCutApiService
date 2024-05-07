@@ -4,6 +4,7 @@ const { check } = require('express-validator')
 const { validarJWT, validarCampos, esAdminRole } = require('../middlewares/index.middlewares')
 const { createProduct, getProducts, getProductById, updateProduct, deleteProduct, updateProductList } = require('../controllers/products.controllers')
 const { nombreTipoProductoExisteProduct, existeIDProduct } = require('../helpers/index.helpers')
+const { verficiarEstatusNombre } = require('../helpers/db_validators/estatus.helpers')
 
 
 const router = Router()
@@ -59,6 +60,8 @@ router.delete('/:id', [
     check('id', 'Debe de contener un ID para eliminar el producto').notEmpty(),
     check('id', 'El ID no es valido').isMongoId(),
     check('id').custom(existeIDProduct),
+    check('estatus', 'Es necesario un estatus para poder modificar el tipo de emprendimiento').notEmpty(),
+    check('estatus').custom(verficiarEstatusNombre),
     validarCampos
 ], deleteProduct)
 
