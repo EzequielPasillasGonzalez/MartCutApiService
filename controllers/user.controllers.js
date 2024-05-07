@@ -2,8 +2,7 @@ const { response } = require('express')
 const bcryptjs = require('bcryptjs')
 
 const {Usuario } = require('../models/index.models')
-const { getUsuariosId, obtenerRolUsuario, obtenerEstatusActivo, existeIdUsuario, obtenerRolEmprendedor, celularExiste, getUsuarios, obtenerEstatusInactivo, obtenerEstatusPausado, obtenerEstatusNombre } = require('../helpers/index.helpers')
-const { buscarCorreoUserModify, getUsuariosNombre } = require('../helpers/db_validators/usuario.helpers')
+const { buscarCorreoUserModify, getUsuariosNombre, generarJWT, getUsuariosId, obtenerRolUsuario, obtenerEstatusActivo, existeIdUsuario, obtenerRolEmprendedor, celularExiste, getUsuarios, obtenerEstatusInactivo, obtenerEstatusPausado, obtenerEstatusNombre } = require('../helpers/index.helpers')
 
 
 const usuariosGet = async (req, res = response) => {
@@ -48,9 +47,14 @@ const usuariosGetCorreo = async (req, res = response) => {
 
         const usuarios = await getUsuariosId(usuarioBuscado._id)
 
+        // Generar el JWT - Token
+        const token = await generarJWT(usuarios.id)
+
         res.json({
             ok: true,         
-            body: usuarios,        
+            body: { usuarios,
+                token
+            },        
         })    
     } catch(error) {
         res.json({
