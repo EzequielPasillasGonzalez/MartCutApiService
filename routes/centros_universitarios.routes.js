@@ -23,7 +23,8 @@ router.get('/buscarPorNombre/',
         check('nombre', 'Es necesario un nombre para poder buscar el Centro Universitario').notEmpty(),
         validarCampos
     ],
-    getTipoEmprendimientoByNombre)
+    // getTipoEmprendimientoByNombre
+)
 
 // router.get('/buscarPorNombre/',
 //     [

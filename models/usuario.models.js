@@ -26,6 +26,10 @@ const UsuarioSchema = Schema ({
         type: String,
         required: [true, 'El password es obligatorio']        
     },
+    codigo_verificacion: {
+        type: String,
+        required: [true, 'El password es obligatorio']        
+    },
     calificacion: {
         type: mongoose.Types.Decimal128, //? Para aceptar decimales        
     },

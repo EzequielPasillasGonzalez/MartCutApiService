@@ -2,10 +2,11 @@ const { Router } = require('express')
 const { check } = require('express-validator')
 
 
-const { validarCampos, validarJWT, esAdminRole, esUsuarioRolRecursivo } = require('../middlewares/index.middlewares')
+const { validarCampos, validarJWT, esAdminRole, esUsuarioRolRecursivo, validarJWTActivarCuenta, validarJWTReenviarcodigo } = require('../middlewares/index.middlewares')
 
-const { usuariosGet, usuariosPut, usuariosPost, usuariosDelete, usuariosPatch, usuariosAltaEmprendedor, usuariosBaja, usuariosGetId, usuariosGetCorreo, usuariosPutIDCambiarPassword, usuariosGetNombre } = require('../controllers/user.controllers')
+const { usuariosGet, usuariosPut, usuariosPost, usuariosDelete, usuariosPatch, usuariosAltaEmprendedor, usuariosBaja, usuariosGetId, usuariosGetCorreo, usuariosPutIDCambiarPassword, usuariosGetNombre, verificarCodigoParaActivar, reenviarCodigo } = require('../controllers/user.controllers')
 const { verficiarEstatusNombre, emailExiste, existeIdUsuario, celularExiste } = require('../helpers/index.helpers')
+const { validarCodigo } = require('../middlewares/validar_codigo')
 
 
 
@@ -32,20 +33,31 @@ router.get('/:id', [        //? Para enviar parametros dinamicos
     validarCampos, // Es para que no truene el programa y lance los errores encontrados    
 ], usuariosGetId)
 
-
+router.put('/activarCuenta/', [        //? Para enviar parametros dinamicos   
+    validarJWTActivarCuenta,     
+    check('codigo', 'El codigo es obligatorio').not().isEmpty(),
+    validarCodigo,
+    validarCampos, // Es para que no truene el programa y lance los errores encontrados    
+], verificarCodigoParaActivar)
 
 router.put('/:id', [        //? Para enviar parametros dinamicos
     validarJWT,
     check('id', 'No es un ID valido').isMongoId(),
     check('id').custom(existeIdUsuario),
-    esUsuarioRolRecursivo,      
+    esUsuarioRolRecursivo,          
     validarCampos, // Es para que no truene el programa y lance los errores encontrados    
 ], usuariosPut)
+
+
+
 
 router.put('/recuperarPassword/:id', [        //? Para enviar parametros dinamicos
     validarJWT,
     check('id', 'No es un ID valido').isMongoId(),
-    check('id').custom(existeIdUsuario),    
+    check('id').custom(existeIdUsuario),  
+    esUsuarioRolRecursivo,
+    check('codigo', 'El codigo es obligatorio').not().isEmpty(),
+    validarCodigo,      
     validarCampos, // Es para que no truene el programa y lance los errores encontrados    
 ], usuariosPutIDCambiarPassword)
 
@@ -56,6 +68,8 @@ router.put('/emprendedor/:id', [        //? Para enviar parametros dinamicos
     esUsuarioRolRecursivo,      
     validarCampos, // Es para que no truene el programa y lance los errores encontrados    
 ], usuariosAltaEmprendedor)
+
+
 
 
 router.post('/',
@@ -73,6 +87,13 @@ router.post('/',
         validarCampos
     ],
     usuariosPost
+)
+
+router.post('/reenviarCodigo', 
+    [
+        validarJWTReenviarcodigo,
+    ],
+    reenviarCodigo
 )
 
 router.delete('/:id', [

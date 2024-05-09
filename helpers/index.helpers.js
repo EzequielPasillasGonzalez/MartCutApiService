@@ -1,5 +1,4 @@
 const generarJWT = require("./generarJWT.helpers");
-const dbValidators = require("./db_validators.helpers");
 const google_verify = require("./google_verify.helpers");
 const subir_archivo = require("./subir_archivo.helpers");
 const sendEmail = require("../controllers/email.controller");
@@ -9,11 +8,13 @@ const centroUniversitarioDBHelper = require('./db_validators/centroUniversitario
 const productoDBHelper = require('./db_validators/producto.helpers')
 const rolDBHelper = require('./db_validators/role.helpers')
 const tipoEmprendimientoDBHelper = require('./db_validators/tipoEmprendimiento.helpers')
-const tipoProductoDBHelper = require('./db_validators/tipoProducto.helpers')
+const tipoProductoDBHelper = require('./db_validators/tipoProducto.helpers');
+const generarCodigo = require("./generarCodigoVerificacion.helpers");
+
+
 
 module.exports = { // Se exportan todos sus modulos
-    ...centroUniversitarioDBHelper,
-    ...dbValidators,
+    ...centroUniversitarioDBHelper,    
     ...estatusDBHelper,
     ...generarJWT,
     ...google_verify,
@@ -24,4 +25,5 @@ module.exports = { // Se exportan todos sus modulos
     ...tipoEmprendimientoDBHelper,
     ...tipoProductoDBHelper,
     ...usuarioDBHelper,
+    ...generarCodigo
 }

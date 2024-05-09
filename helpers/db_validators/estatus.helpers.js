@@ -31,6 +31,19 @@ const obtenerEstatusPausado = async () => {
   }
 }
 
+const obtenerEstatusBaja = async () => {
+  try {
+    const estatusPausado = await Estatus.findOne({ _id: '663bd399779a3dfa62327e28' })
+
+    return estatusPausado
+
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+}
+
 const obtenerEstatusInactivo = async () => {
   try {
     const estatusInactivo = await Estatus.findOne({ _id: '66286a4e387f975b640c2368' })
@@ -79,6 +92,23 @@ const verificarEstatusActivo = async (objetoVerificar = "") => {
 
     if (estatusActivo._id.toString() !== estatusBuscar._id.toString()) {
       throw new Error(`El estatus de ${objetoVerificar.nombre} es inactivo`);
+    }
+    return true;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
+const verificarEstatusParaActivar = async (objetoVerificar = "") => {
+  try {
+    const estatusBaja = await Estatus.findById("663bd399779a3dfa62327e28");
+    const estatusInactivo = await Estatus.findById("66286a4e387f975b640c2368");
+    const estatusBuscar = await Estatus.findById(objetoVerificar.uid_estatus);    
+
+    if (estatusBaja._id.toString() !== estatusBuscar._id.toString() && estatusInactivo._id.toString() !== estatusBuscar._id.toString()) {
+      throw new Error(`El estatus de ${objetoVerificar.nombre} no es compatible con esta acción`);
     }
     return true;
   } catch (error) {
@@ -149,9 +179,11 @@ module.exports = {
   getEstaus,
   obtenerEstatusPausado,
   obtenerEstatusActivo,
+  obtenerEstatusBaja,
   obtenerEstatusInactivo,
   obtenerEstatusNombre,
   verificarEstatusActivo,
+  verificarEstatusParaActivar,
   existeIDEstatus,
   existeEstatusNombre,
   verficiarEstatusNombre
