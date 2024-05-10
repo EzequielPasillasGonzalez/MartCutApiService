@@ -9,6 +9,7 @@ const productoDBHelper = require('./db_validators/producto.helpers')
 const rolDBHelper = require('./db_validators/role.helpers')
 const tipoEmprendimientoDBHelper = require('./db_validators/tipoEmprendimiento.helpers')
 const tipoProductoDBHelper = require('./db_validators/tipoProducto.helpers');
+const tipoEntregaDBHelper = require('./db_validators/tipoEntrega.helpers');
 const generarCodigo = require("./generarCodigoVerificacion.helpers");
 
 
@@ -23,6 +24,7 @@ module.exports = { // Se exportan todos sus modulos
     ...sendEmail,
     ...subir_archivo,
     ...tipoEmprendimientoDBHelper,
+    ...tipoEntregaDBHelper,
     ...tipoProductoDBHelper,
     ...usuarioDBHelper,
     ...generarCodigo

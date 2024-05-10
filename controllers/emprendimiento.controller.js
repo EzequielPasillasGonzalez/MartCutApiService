@@ -6,20 +6,21 @@ const { obtenerEstatusActivo } = require("../helpers/db_validators/estatus.helpe
 const createEmprendimiento = async (req, res = response) => {
     try {
         const { ...resto } = req.body
+        console.log(...resto);
 
-        const usuario = req.usuario
+        const {id} = req.usuario
 
-        const createDate = new Date()
+        const fecha_creacion = new Date()
 
         const estatusActivo = await obtenerEstatusActivo()
 
-        const emprendimiento = new Emprendimiento(...resto)
+        const emprendimiento = new Emprendimiento({fecha_creacion, uid_estatus: estatusActivo._id, uid_usuario_emprendedor: id,...resto})
 
-        console.log(emprendimiento);
+        // console.log(emprendimiento);
 
         return res.status(200).json({
             ok: true,
-            body: {usuario, ...resto}
+            body: 'emprendimiento'
         })
 
     } catch (error) {

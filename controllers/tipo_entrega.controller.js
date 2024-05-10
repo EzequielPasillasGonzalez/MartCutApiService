@@ -1,9 +1,10 @@
-  const { response } = require("express");
+const { response } = require("express");
 
-const { TipoProucto } = require('../models/index.models');
-const { obtenerEstatusActivo, getTipoProducto, getTipoProductoById, nombreTipoProductoExisteProduct, obtenerEstatusNombre } = require("../helpers/index.helpers");
+const { TipoEntrega } = require('../models/index.models');
+const { obtenerEstatusActivo, getTipoEntregaHelper, getTipoEntregaById, nombreTipoEntregaExisteProducto, obtenerEstatusNombre } = require("../helpers/index.helpers");
 
-const createCategory = async (req, res = response) => {
+
+const createTipoEntrega = async (req, res = response) => {
 
     try {
 
@@ -20,13 +21,13 @@ const createCategory = async (req, res = response) => {
             uid_estatus: estatusActivo._id
         }
 
-        const category = new TipoProucto(data)
+        const category = new TipoEntrega(data)
 
         await category.save()
 
         return res.status(200).json({
             ok: true,
-            body: `La categoria ${category.nombre} fue creada exitosamente`
+            body: `El tipo de entrega ${category.nombre} fue creado exitosamente`
         })
 
     } catch (error) {
@@ -40,12 +41,12 @@ const createCategory = async (req, res = response) => {
 }
 
 // Obtenercategorias - paginado - total - populate / Para que obtenga los datos del usario
-const getCategories = async (req, res = response) => {
+const getTipoEntregas = async (req, res = response) => {
 
     try {
-        
 
-        const tipoProducto = await getTipoProducto()
+
+        const tipoProducto = await getTipoEntregaHelper()
 
         res.json({
             ok: true,
@@ -61,12 +62,12 @@ const getCategories = async (req, res = response) => {
 }
 
 // Obtenercategoria - populate
-const getCategoryByID = async (req, res = response) => {
+const getTipoEntregaByID = async (req, res = response) => {
     try {
 
         const { id } = req.params
 
-        const category = await getTipoProductoById(id)
+        const category = await getTipoEntregaById(id)
 
         res.json({
             ok: true,
@@ -81,12 +82,12 @@ const getCategoryByID = async (req, res = response) => {
     }
 }
 
-const getCategoryByIDAll = async (req, res = response) => {
+const getTipoEntregaByIDAll = async (req, res = response) => {
     try {
 
         const { id } = req.params
 
-        const category = await TipoProucto.findById(id)
+        const category = await TipoEntrega.findById(id)
 
         res.json({
             ok: true,
@@ -101,17 +102,17 @@ const getCategoryByIDAll = async (req, res = response) => {
     }
 }
 
-const getCategoryByNombre = async (req, res = response) => {
+const getTipoEntregaByNombre = async (req, res = response) => {
     try {
 
         const { nombre } = req.body
 
-        const category = await nombreTipoProductoExisteProduct(nombre)
-        
+        const category = await nombreTipoEntregaExisteProducto(nombre)
+
         let categoria
-        if(category){
-            categoria = await getTipoProductoById(category._id.toString())
-        }else {
+        if (category) {
+            categoria = await getTipoEntregaById(category._id.toString())
+        } else {
             res.json({
                 ok: false,
                 body: `Ocurrio un problema con el servidor, contacta con el administrador.`
@@ -131,12 +132,12 @@ const getCategoryByNombre = async (req, res = response) => {
     }
 }
 
-const getCategoryByNombreAll = async (req, res = response) => {
+const getTipoEntregaByNombreAll = async (req, res = response) => {
     try {
 
         const { nombre } = req.body
 
-        const category = await nombreTipoProductoExisteProduct(nombre)
+        const category = await nombreTipoEntregaExisteProducto(nombre)
 
         res.json({
             ok: true,
@@ -152,27 +153,27 @@ const getCategoryByNombreAll = async (req, res = response) => {
 }
 
 // Actualizar categoria - recibes ID - y cambias nombre
-const updateCategoryByID = async (req, res = response) => {
+const updateTipoEntregaByID = async (req, res = response) => {
     try {
 
         const { id } = req.params
 
         const uid_modificado_por = req.usuario.uid
-        const fecha_creacion = new Date() 
+        const fecha_creacion = new Date()
 
         let { nombre } = req.body
 
-        
+
 
         // datos.modifyDate = modifyDate
         // datos.userModify = usuario
 
-        const category = await TipoProucto.findByIdAndUpdate(id, { uid_modificado_por, fecha_creacion, nombre }, {new: true})            
+        const category = await TipoEntrega.findByIdAndUpdate(id, { uid_modificado_por, fecha_creacion, nombre }, { new: true })
 
         let tipoID
-        if(category){
-            tipoID = await getTipoProductoById(id)
-        }else{
+        if (category) {
+            tipoID = await getTipoEntregaById(id)
+        } else {
             res.json({
                 ok: false,
                 body: `Ocurrio un problema con el servidor, contacta con el administrador.`
@@ -192,18 +193,18 @@ const updateCategoryByID = async (req, res = response) => {
     }
 }
 
-const deleteCategoryByID = async (req, res = response) => {
-    try {            
+const deleteTipoEntregaByID = async (req, res = response) => {
+    try {
 
         const { id } = req.params
         const uid_modificado_por = req.usuario.uid
-        const fecha_modificacion = new Date() 
+        const fecha_modificacion = new Date()
 
-        const {estatus} = req.body
+        const { estatus } = req.body
 
-        const estatusBuscado = await obtenerEstatusNombre(estatus)                
+        const estatusBuscado = await obtenerEstatusNombre(estatus)
 
-        const category = await TipoProucto.findByIdAndUpdate(id, { uid_estatus: estatusBuscado._id, fecha_modificacion, uid_modificado_por }, {new: true})
+        const category = await TipoEntrega.findByIdAndUpdate(id, { uid_estatus: estatusBuscado._id, fecha_modificacion, uid_modificado_por }, { new: true })
 
         res.json({
             ok: true,
@@ -220,12 +221,12 @@ const deleteCategoryByID = async (req, res = response) => {
 
 
 module.exports = {
-    createCategory,
-    getCategories,
-    getCategoryByID,
-    updateCategoryByID,
-    deleteCategoryByID,
-    getCategoryByNombre,
-    getCategoryByNombreAll,
-    getCategoryByIDAll
+    createTipoEntrega,
+    getTipoEntregas,
+    getTipoEntregaByID,
+    getTipoEntregaByIDAll,
+    getTipoEntregaByNombre,
+    getTipoEntregaByNombreAll,
+    updateTipoEntregaByID,
+    deleteTipoEntregaByID
 }

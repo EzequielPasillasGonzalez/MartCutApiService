@@ -53,7 +53,7 @@ class Server {
         this.app.use(process.env.BASE_URL_PRODUCTOS, require('../routes/tipo_producto.routes'))
         this.app.use(process.env.BASE_URL_TIPOEMPRENDIMIENTO, require('../routes/tipo_emprendimiento.routes'))
         this.app.use(process.env.BASE_URL_EMPRENDIMIENTO, require('../routes/emprendimiento.routes'))
-        // this.app.use(process.env.BASE_URL_AUTENTICAR, require('../routes/products.routes'))
+        this.app.use(process.env.BASE_URL_TIPOENTREGA, require('../routes/tipo_entrega.routes'))
         this.app.use(process.env.BASE_URL_ROL, require('../routes/role.routes'))
         // this.app.use(this.paths.uploads, require('../routes/uploads.routes'))
         this.app.use(process.env.BASE_URL_USUARIO, require('../routes/user.routes'))

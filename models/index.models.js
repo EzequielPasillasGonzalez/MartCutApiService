@@ -8,6 +8,8 @@ const Usuario             = require('./usuario.models')
 const CentroUniversitario = require('./centro_universitario.models')
 const Server              = require('./server.models')
 const Transporter     = require('../models/mailer.models');
+const TipoEntrega = require('./tipo_entrega.models');
+
 
 
 
@@ -19,8 +21,9 @@ module.exports = {
     Role,
     Server,
     Usuario,
-    Estatus,
+    Estatus,    
     TipoEmprendimiento,
+    TipoEntrega,
     TipoProucto,
     CentroUniversitario,
     Transporter    
