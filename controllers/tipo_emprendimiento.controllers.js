@@ -1,8 +1,7 @@
 const { response } = require("express");
 
 const { TipoEmprendimiento } = require('../models/index.models');
-const { obtenerEstatusNombre, buscarNombreTipoEmprendimiento, obtenerEstatusInactivo, obtenerEstatusActivo, getTipoEmprendimiento } = require("../helpers/index.helpers");
-const { getTipoEmprendimientoById } = require("../helpers/db_validators/tipoEmprendimiento.helpers");
+const { getTipoEmprendimientoById, obtenerEstatusNombre, buscarNombreTipoEmprendimiento, obtenerEstatusInactivo, obtenerEstatusActivo, getTipoEmprendimiento } = require("../helpers/index.helpers");
 
 
 const createTipoEmprendimiento = async (req, res = response) => {

@@ -2,8 +2,9 @@ const { Router } = require('express')
 const { check } = require('express-validator')
 
 const { validarJWT, validarCampos, esAdminRole } = require('../middlewares/index.middlewares')
-const { verficiarEstatusNombre, existeEstatusNombre, existeIdTipoEmprendimiento, verificarExisteNombreTipoEmprendimiento } = require('../helpers/index.helpers')
-const { createCentroUniversitario, getCentrosUniversitarios } = require('../controllers/centros_universitarios.controllers')
+const { existeIdCentroUniversitario, verficiarEstatusNombre} = require('../helpers/index.helpers')
+const { createCentroUniversitario, getCentrosUniversitarios, getCentroUniversitarioByNombre, getCentroUniversitarioByNombreAll, getCentroUniversitarioByID, getCentroUniversitarioByIDAll, updateCentroUniversitarioByID, deleteCentroUniversitarioByID } = require('../controllers/centros_universitarios.controllers')
+const { verificarExisteNombreCentroUniversitario } = require('../helpers/db_validators/centroUniversitario.helpers')
 
 
 
@@ -23,71 +24,63 @@ router.get('/buscarPorNombre/',
         check('nombre', 'Es necesario un nombre para poder buscar el Centro Universitario').notEmpty(),
         validarCampos
     ],
-    // getTipoEmprendimientoByNombre
+    getCentroUniversitarioByNombre
 )
 
-// router.get('/buscarPorNombre/',
-//     [
-//         check('nombre', 'Es necesario un nombre para poder buscar el tipo de emprendimiento').notEmpty(),
-//     ],
-//     getTipoEmprendimientoByNombre)
+router.get('/buscarPorNombreAll/',
+    [
+        validarJWT,
+        esAdminRole,
+        check('nombre', 'Es necesario un nombre para poder buscar el tipo de emprendimiento').notEmpty(),
+    ],
+    getCentroUniversitarioByNombreAll)
 
-// router.get('/buscarPorNombreAll/',
-//     [
-//         validarJWT,
-//         esAdminRole,
-//         check('nombre', 'Es necesario un nombre para poder buscar el tipo de emprendimiento').notEmpty(),
-//     ],
-//     getTipoEmprendimientoByNombreAll)
+router.get('/:id', [
+    check('id', 'El ID es necesario para la búsqueda especializada').notEmpty(),
+    check('id', 'El ID no es validio').isMongoId(),
+    existeIdCentroUniversitario,
+    validarCampos
+], getCentroUniversitarioByID)
 
-// router.get('/:id', [
-//     check('id', 'El ID es necesario para la búsqueda especializada').notEmpty(),
-//     check('id', 'El ID no es validio').isMongoId(),
-//     check('id').custom(existeIdTipoEmprendimiento),
-//     validarCampos
-// ], getTipoEmprendimientoByID)
-
-// router.get('/buscarPorIdAll/:id', [
-//     validarJWT,
-//     esAdminRole,
-//     check('id', 'El ID es necesario para la búsqueda especializada').notEmpty(),
-//     check('id', 'El ID no es validio').isMongoId(),
-//     check('id').custom(existeIdTipoEmprendimiento),
-//     validarCampos
-// ], getTipoEmprendimientoByIDAll)
+router.get('/buscarPorIdAll/:id', [
+    validarJWT,
+    esAdminRole,
+    check('id', 'El ID es necesario para la búsqueda especializada').notEmpty(),
+    check('id', 'El ID no es validio').isMongoId(),    
+    validarCampos
+], getCentroUniversitarioByIDAll)
 
 router.post('/', [
     validarJWT,
     esAdminRole,
     check('nombre', 'Es necesario un nombre para poder crear el crear el Centro Universitario').notEmpty(),
-    check('nombre').custom(verificarExisteNombreTipoEmprendimiento),
+    check('nombre').custom(verificarExisteNombreCentroUniversitario),
     check('abreviacion', 'Es necesario una abreviacion para poder crear el Centro Universitario').notEmpty(),
     check('domicilio', 'Es necesario una domicilio para poder crear el Centro Universitario').notEmpty(),
     validarCampos
 ], createCentroUniversitario)
 
 
-// router.put('/:id', [
-//     validarJWT,
-//     esAdminRole,
-//     check('id', 'El ID es necesario para la modificacion').notEmpty(),
-//     check('id', 'El ID no es validio').isMongoId(),
-//     check('id').custom(existeIdTipoEmprendimiento),
-//     check('nombre', 'Es necesario un nombre para poder buscar el tipo de emprendimiento').notEmpty(),
-//     check('nombre').custom(verificarExisteNombreTipoEmprendimiento),
-//     validarCampos
-// ], updateTipoEmprendimientoByID)
+router.put('/:id', [
+    validarJWT,
+    esAdminRole,
+    check('id', 'El ID es necesario para la modificacion').notEmpty(),
+    check('id', 'El ID no es validio').isMongoId(),
+    existeIdCentroUniversitario,
+    check('nombre').custom(verificarExisteNombreCentroUniversitario),
+    validarCampos
+], updateCentroUniversitarioByID)
 
-// // Borrar una categoria - Admin - cualquier persona con un token valido
-// router.delete('/:id', [
-//     validarJWT,
-//     esAdminRole,
-//     check('id', 'El ID es necesario para la modificacion').notEmpty(),
-//     check('id', 'El ID no es validio').isMongoId(),
-//     check('id').custom(existeIdTipoEmprendimiento),
-//     check('estatus', 'Es necesario un estatus para poder modificar el tipo de emprendimiento').notEmpty(),
-//     check('estatus').custom(verficiarEstatusNombre),
-//     validarCampos
-// ], deleteTipoEmprendimientoByID)
+// Borrar una categoria - Admin - cualquier persona con un token valido
+router.delete('/:id', [
+    validarJWT,
+    esAdminRole,
+    check('id', 'El ID es necesario para la modificacion').notEmpty(),
+    check('id', 'El ID no es validio').isMongoId(),
+    existeIdCentroUniversitario,
+    check('estatus', 'Es necesario un estatus para poder modificar el tipo de emprendimiento').notEmpty(),
+    check('estatus').custom(verficiarEstatusNombre),
+    validarCampos
+], deleteCentroUniversitarioByID)
 
 module.exports = router

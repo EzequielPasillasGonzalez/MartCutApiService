@@ -1,7 +1,8 @@
 const { response } = require("express");
 
 const { CentroUniversitario } = require('../models/index.models');
-const { getCentrosUniversitariosDB, obtenerEstatusNombre, buscarNombreTipoEmprendimiento, obtenerEstatusInactivo, obtenerEstatusActivo, getTipoEmprendimiento } = require("../helpers/index.helpers");
+const { existeIdCentroUniversitario, getCentroUniversitarioById, buscarNombreCentroUniversitario, getCentrosUniversitariosDB, obtenerEstatusNombre, buscarNombreTipoEmprendimiento, obtenerEstatusInactivo, obtenerEstatusActivo, getTipoEmprendimiento } = require("../helpers/index.helpers");
+
 
 
 
@@ -66,23 +67,23 @@ const getCentrosUniversitarios = async (req, res = response) => {
 const getCentroUniversitarioByNombre = async (req, res = response) => {
     try {
 
-        const { nombre } = req.body
+        const { nombre } = req.body        
 
-        const tipoEmprendimiento = await buscarNombreTipoEmprendimiento(nombre)
+        const centro_universitario = await buscarNombreCentroUniversitario(nombre)
         
-        let categoriaTipoEmprendimiento
-        if(tipoEmprendimiento){
-            categoriaTipoEmprendimiento = await getTipoEmprendimientoById(tipoEmprendimiento._id.toString())
+        let centro_universitarioDatos
+        if(centro_universitario){
+            centro_universitarioDatos = await getCentroUniversitarioById(centro_universitario._id.toString())
         }else {
             res.json({
                 ok: false,
                 body: `Ocurrio un problema con el servidor, contacta con el administrador.`
             })
-        }
+        }        
 
         res.json({
             ok: true,
-            body: categoriaTipoEmprendimiento
+            body: centro_universitarioDatos
         })
 
     } catch (error) {
@@ -98,11 +99,11 @@ const getCentroUniversitarioByNombreAll = async (req, res = response) => {
 
         const { nombre } = req.body
 
-        const tipoEmprendimiento = await buscarNombreTipoEmprendimiento(nombre)
+        const centro_universitario = await buscarNombreCentroUniversitario(nombre)
 
         res.json({
             ok: true,
-            body: tipoEmprendimiento
+            body: centro_universitario
         })
 
     } catch (error) {
@@ -113,15 +114,11 @@ const getCentroUniversitarioByNombreAll = async (req, res = response) => {
     }
 }
 const getCentroUniversitarioByID = async (req, res = response) => {
-    try {
-
-        const { id } = req.params
-
-        const tipoEmprendimiento = await getTipoEmprendimientoById(id)
+    try {        
 
         res.json({
             ok: true,
-            body: tipoEmprendimiento
+            body: req.body.centroUniversitario
         })
 
     } catch (error) {
@@ -155,33 +152,17 @@ const getCentroUniversitarioByIDAll = async (req, res = response) => {
 const updateCentroUniversitarioByID = async (req, res = response) => {
     try {
 
-        const { id } = req.params
-
+        const { id } = req.params        
         const uid_modificado_por = req.usuario.uid
         const fecha_creacion = new Date() 
 
-        let { nombre } = req.body
+        let { uid_estatus, ...resto } = req.body
 
-        
-
-        // datos.modifyDate = modifyDate
-        // datos.userModify = usuario
-
-        const tipoEmprendimiento = await CentroUniversitario.findByIdAndUpdate(id, { uid_modificado_por, fecha_creacion, nombre }, {new: true})            
-
-        let tipoID
-        if(tipoEmprendimiento){
-            tipoID = await getTipoEmprendimientoById(id)
-        }else{
-            res.json({
-                ok: false,
-                body: `Ocurrio un problema con el servidor, contacta con el administrador.`
-            })
-        }
+        const tipoEmprendimiento = await CentroUniversitario.findByIdAndUpdate(id, { uid_modificado_por, fecha_creacion, ...resto }, {new: true})            
 
         res.json({
             ok: true,
-            body: tipoID
+            body: tipoEmprendimiento
         })
 
     } catch (error) {

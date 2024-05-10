@@ -15,7 +15,7 @@ const enviarCorreos = async (email, codigo_verficacion) => {
                 border: 2px solid #003764;">
                     <div class="adM">                    
                     </div>           
-                    <img src="https://res.cloudinary.com/dpjkjdwbw/image/upload/v1715272298/y8p1krxt66twebhxb7lv.jpg" width="100px" height="100px" class="CToWUd" data-bit="iit">         
+                    <img src="https://res.cloudinary.com/dpjkjdwbw/image/upload/v1715284995/vjvdjyfkezw3ofzoayzk.png" width="100px" height="100px" class="CToWUd" data-bit="iit">         
                 </div>
                 <div style="color:#003764;">
                     <h1 style="text-align:center"><span class="il">Código</span> de verificación </h1>

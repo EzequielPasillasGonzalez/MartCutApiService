@@ -335,7 +335,7 @@ const verificarCodigoParaActivar = async (req, res = response) => {
     try {        
         const uidUsuario = req.usuario.uid
 
-        console.log(req.usuario.uid);
+        // console.log(req.usuario.uid);
 
 
         const estatusActivo = await obtenerEstatusActivo()

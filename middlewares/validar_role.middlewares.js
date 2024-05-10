@@ -41,12 +41,14 @@ const esEmprendedorRol = async ( req, res = response, next) => {
     
         await verificarRolEmprendedor(uid_rol)
 
-        if(req.params.id !== req.usuario.uid){
-            return res.status(400).json ({            
-                ok: false,
-                body: 'El usuario no tiene privilegios necesarios'
-            })
-        }   
+        if(req.baseUrl.toString() === process.env.BASE_URL_USUARIO){
+            if(req.params.id !== req.usuario.uid){
+                return res.status(400).json ({            
+                    ok: false,
+                    body: 'El usuario no tiene privilegios necesarios'
+                })
+            }   
+        }             
     
         next()
     } catch(error) {
@@ -69,18 +71,26 @@ const esEmprendedorRolRecursivo = async ( req, res = response, next) => {
             })
         }
     
-        const { uid_rol} = req.usuario        
+        const { uid_rol} = req.usuario         
     
-        await verificarRolEmprendedor(uid_rol)
+        const resp = await verificarRolEmprendedor(uid_rol.toString())                
     
-        if(req.params.id !== req.usuario.uid){
-            return res.status(400).json ({            
-                ok: false,
-                body: 'El usuario no tiene privilegios necesarios'
-            })
-        }   
+        if(req.baseUrl.toString() === process.env.BASE_URL_USUARIO){
+            if(req.params.id !== req.usuario.uid){
+                return res.status(400).json ({            
+                    ok: false,
+                    body: 'El usuario no tiene privilegios necesarios'
+                })
+            }   
+        }        
         
-        next()
+
+        if(resp === true){
+            
+            return next()
+        }
+        
+        
     } catch(error) {
         // return res.status(500).json ({
         //     ok: false,
@@ -104,15 +114,21 @@ const esUsuarioRolRecursivo = async ( req, res = response, next) => {
     
         const { uid_rol} = req.usuario        
     
-        await verificarRolUsuario(uid_rol)
+        const resp = await verificarRolUsuario(uid_rol)
 
-        if(req.params.id !== req.usuario.uid){
-            return res.status(400).json ({            
-                ok: false,
-                body: 'El usuario no tiene privilegios necesarios'
-            })
+        if(req.baseUrl.toString() === process.env.BASE_URL_USUARIO){
+            if(req.params.id !== req.usuario.uid){
+                return res.status(400).json ({            
+                    ok: false,
+                    body: 'El usuario no tiene privilegios necesarios'
+                })
+            }   
         }    
-        next()
+        
+        if(resp === true){
+            
+            return next()
+        }
     } catch(error) {
         // return res.status(500).json ({
         //     ok: false,

@@ -2,7 +2,7 @@ const { Router } = require('express')
 const { check } = require('express-validator')
 
 const { validarJWT, validarCampos, esAdminRole } = require('../middlewares/index.middlewares')
-const { existeEstatusNombre, existeIdTipoEmprendimiento, verificarExisteNombreTipoEmprendimiento } = require('../helpers/index.helpers')
+const { existeIdTipoEmprendimiento, verificarExisteNombreTipoEmprendimiento } = require('../helpers/index.helpers')
 const { createTipoEmprendimiento, getTiposEmprendimiento, getTipoEmprendimientoByNombre, getTipoEmprendimientoByNombreAll, getTipoEmprendimientoByID, getTipoEmprendimientoByIDAll, updateTipoEmprendimientoByID, deleteTipoEmprendimientoByID } = require('../controllers/tipo_emprendimiento.controllers')
 const { verficiarEstatusNombre } = require('../helpers/db_validators/estatus.helpers')
 
@@ -26,11 +26,11 @@ router.get('/buscarPorNombre/',
     ],
     getTipoEmprendimientoByNombre)
 
-router.get('/buscarPorNombre/',
-    [
-        check('nombre', 'Es necesario un nombre para poder buscar el tipo de emprendimiento').notEmpty(),
-    ],
-    getTipoEmprendimientoByNombre)
+// router.get('/buscarPorNombre/',
+//     [
+//         check('nombre', 'Es necesario un nombre para poder buscar el tipo de emprendimiento').notEmpty(),
+//     ],
+//     getTipoEmprendimientoByNombre)
 
 router.get('/buscarPorNombreAll/',
     [
