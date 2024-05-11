@@ -1,7 +1,8 @@
 const { response } = require("express");
 
 const { CentroUniversitario } = require('../models/index.models');
-const { existeIdCentroUniversitario, getCentroUniversitarioById, buscarNombreCentroUniversitario, getCentrosUniversitariosDB, obtenerEstatusNombre, buscarNombreTipoEmprendimiento, obtenerEstatusInactivo, obtenerEstatusActivo, getTipoEmprendimiento } = require("../helpers/index.helpers");
+const { getCentroUniversitarioByNombreDB, existeIdCentroUniversitario, getCentroUniversitarioById, buscarNombreCentroUniversitario, getCentrosUniversitariosDB, obtenerEstatusNombre, buscarNombreTipoEmprendimiento, obtenerEstatusInactivo, obtenerEstatusActivo, getTipoEmprendimiento } = require("../helpers/index.helpers");
+const {  } = require("../helpers/db_validators/centroUniversitario.helpers");
 
 
 
@@ -69,21 +70,21 @@ const getCentroUniversitarioByNombre = async (req, res = response) => {
 
         const { nombre } = req.body        
 
-        const centro_universitario = await buscarNombreCentroUniversitario(nombre)
+        const centro_universitario = await getCentroUniversitarioByNombreDB(nombre)
         
-        let centro_universitarioDatos
-        if(centro_universitario){
-            centro_universitarioDatos = await getCentroUniversitarioById(centro_universitario._id.toString())
-        }else {
-            res.json({
-                ok: false,
-                body: `Ocurrio un problema con el servidor, contacta con el administrador.`
-            })
-        }        
+        // let centro_universitarioDatos
+        // if(centro_universitario){
+        //     centro_universitarioDatos = await getCentroUniversitarioById(centro_universitario._id.toString())
+        // }else {
+        //     res.json({
+        //         ok: false,
+        //         body: `Ocurrio un problema con el servidor, contacta con el administrador.`
+        //     })
+        // }        
 
         res.json({
             ok: true,
-            body: centro_universitarioDatos
+            body: centro_universitario
         })
 
     } catch (error) {

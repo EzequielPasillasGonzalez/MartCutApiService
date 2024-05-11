@@ -64,7 +64,7 @@ const buscarNombreCentroUniversitario = async (nombre = "") => {
 const verificarExisteNombreCentroUniversitario = async (nombre = "") => {
     try {
         if (nombre) {
-            const nombreCentroUniversitario = CentroUniversitario.findOne({ nombre });
+            const nombreCentroUniversitario = await CentroUniversitario.findOne({ nombre });            
 
             if (nombreCentroUniversitario) {
                 throw new Error(
@@ -170,6 +170,55 @@ const getCentroUniversitarioById = async (id) => {
     }
 };
 
+const getCentroUniversitarioByNombreDB = async (nombre) => {
+    try {
+
+        const regex = new RegExp(nombre, "i")
+        const query = await CentroUniversitario.aggregate([
+            {
+                $match: {
+                    nombre: regex  // Usa 'new' para crear una nueva instancia de ObjectId
+                }
+            },
+            {
+                $lookup: {
+                    from: "estatus",
+                    localField: "uid_estatus",
+                    foreignField: "_id",
+                    as: "datos_estatus",
+                },
+            },
+            {
+                $lookup: {
+                    from: "usuarios",
+                    localField: "uid_modificado_por",
+                    foreignField: "_id",
+                    as: "modificado_por",
+                },
+            },
+            {
+                $project: {
+                    _id: 0,
+                    uid: "$_id", 
+                    nombre: 1,
+                    abreviado: 1,
+                    domicilio: 1,                                       
+                    nombre_estatus: { $arrayElemAt: ["$datos_estatus.nombre", 0] }, // Asume que el campo del nombre del estatus es 'nombre'
+                    uid_estatus: { $arrayElemAt: ["$datos_estatus._id", 0] },
+                    modificado_por: { $arrayElemAt: ["$modificado_por.nombre", 0] },
+                    uid_modificado_por: { $arrayElemAt: ["$modificado_por._id", 0] },
+                },
+            },
+        ]);
+
+        return query;
+    } catch (error) {
+        throw new Error(
+            `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+        );
+    }
+};
+
 const existeIdCentroUniversitario = async ( req = request, res = response, next ) => {
     try {
         const { id } = req.params;
@@ -199,4 +248,5 @@ module.exports = {
     verificarExisteNombreCentroUniversitario,
     getCentrosUniversitariosDB,
     getCentroUniversitarioById,
+    getCentroUniversitarioByNombreDB,
 };

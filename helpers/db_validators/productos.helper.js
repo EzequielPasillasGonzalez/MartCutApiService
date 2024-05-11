@@ -3,12 +3,12 @@ const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 
 const {        
-    Emprendimiento    
+    Producto    
   } = require("../../models/index.models");
 
 const buscarIdEmprendimiento = async (id = "") => {
     try {
-      const nombreEmprendimiento = await Emprendimiento.findById(id);
+      const nombreEmprendimiento = await Producto.findById(id);
   
       if (!nombreEmprendimiento) {
         throw new Error(`El emprendimiento no existe en la Base de Datos`);
@@ -25,7 +25,7 @@ const buscarIdEmprendimiento = async (id = "") => {
   const buscarNombreEmprendimiento = async (nombre = "") => {
     try {
       const regex = new RegExp(nombre, "i");
-      const nombreEmprendimiento = await Emprendimiento.findOne({ nombre: regex });   
+      const nombreEmprendimiento = await Producto.findOne({ nombre: regex });   
       console.log(nombreEmprendimiento);   
   
       if (!nombreEmprendimiento) {
@@ -45,7 +45,7 @@ const buscarIdEmprendimiento = async (id = "") => {
   const verificarExisteNombreEmprendimiento = async (nombre = "") => {
     try {
       const regex = new RegExp(nombre, "i");
-      const nombreEmprendimiento = await Emprendimiento.findOne({ regex });
+      const nombreEmprendimiento = await Producto.findOne({ regex });
   
       if (nombreEmprendimiento) {
         throw new Error(
@@ -65,7 +65,7 @@ const buscarIdEmprendimiento = async (id = "") => {
 
     try {
 
-        const usuarios = await Emprendimiento.aggregate([
+        const usuarios = await Producto.aggregate([
             {
                 $lookup: {
                     from: "estatus",
@@ -184,7 +184,7 @@ const getEmprendimientosById = async (id) => {
 
   try {
 
-      const usuarios = await Emprendimiento.aggregate([
+      const usuarios = await Producto.aggregate([
         {
           $match: {
             _id: new ObjectId(id) // Usa 'new' para crear una nueva instancia de ObjectId
@@ -307,7 +307,7 @@ const getEmprendimientosById = async (id) => {
 const existeIdEmprendimiento = async (req = request, res = response, next) => {
   try {
     const id = req.params.id    
-    const existeEmprendimiento = await Emprendimiento.findById(id);
+    const existeEmprendimiento = await Producto.findById(id);
 
 
     if (!existeEmprendimiento) {      

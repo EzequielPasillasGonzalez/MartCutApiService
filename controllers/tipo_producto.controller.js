@@ -158,7 +158,7 @@ const updateCategoryByID = async (req, res = response) => {
         const { id } = req.params
 
         const uid_modificado_por = req.usuario.uid
-        const fecha_creacion = new Date() 
+        const fecha_modificacion = new Date() 
 
         let { nombre } = req.body
 
@@ -167,7 +167,7 @@ const updateCategoryByID = async (req, res = response) => {
         // datos.modifyDate = modifyDate
         // datos.userModify = usuario
 
-        const category = await TipoProucto.findByIdAndUpdate(id, { uid_modificado_por, fecha_creacion, nombre }, {new: true})            
+        const category = await TipoProucto.findByIdAndUpdate(id, { uid_modificado_por, fecha_modificacion, nombre }, {new: true})            
 
         let tipoID
         if(category){
