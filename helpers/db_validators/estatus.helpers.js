@@ -101,6 +101,22 @@ const verificarEstatusActivo = async (objetoVerificar = "") => {
   }
 };
 
+const validaEstatusActivo = async (objetoVerificar = "") => {
+  try {
+    const estatusActivo = await Estatus.findById("662857091815a1aa5532119a");
+    const estatusBuscar = await Estatus.findById(objetoVerificar.uid_estatus);
+
+    if (estatusActivo._id.toString() !== estatusBuscar._id.toString()) {
+      return false
+    }
+    return true;
+  } catch (error) {
+    throw new Error(
+      `Hubo un problema con el servidor, contacta con un administrador. ${error.message}`
+    );
+  }
+};
+
 const verificarEstatusParaActivar = async (objetoVerificar = "") => {
   try {
     const estatusBaja = await Estatus.findById("663bd399779a3dfa62327e28");
@@ -182,6 +198,7 @@ module.exports = {
   obtenerEstatusBaja,
   obtenerEstatusInactivo,
   obtenerEstatusNombre,
+  validaEstatusActivo,
   verificarEstatusActivo,
   verificarEstatusParaActivar,
   existeIDEstatus,

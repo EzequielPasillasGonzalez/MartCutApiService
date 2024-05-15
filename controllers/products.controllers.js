@@ -1,35 +1,32 @@
 const { response } = require("express");
 
-const { Producto, Category } = require('../models/index.models');
+const { Producto } = require('../models/index.models');
 const { buscarCorreoUserModify, buscarCategoriaModificarProducto } = require("../helpers/index.helpers");
+const { obtenerEstatusActivo } = require("../helpers/db_validators/estatus.helpers");
 
 const createProduct = async(req, res = response) =>{
     try {
-        const {nombre, category,...resto} = req.body
+        const {nombre, tipo_producto,...resto} = req.body
 
-        const createDate = new Date()                        
+        const {uid} = req.usuario
 
-        const categoryDB = await Category.findOne({ nombre:category })    
+        const fecha_creacion = new Date()  
+        
+        const estatusActivo = await obtenerEstatusActivo()                
 
-        //console.log(categoryDB);
-
-        const data = {
-            nombre,
-            userCreate: req.usuario.uid,
-            userModify: req.usuario.uid,
-            createDate: createDate,
-            modifyDate: createDate,
-            category: categoryDB._id,
-            ...resto,            
+        if(tipo_producto){
+            
         }
 
-        const product = new Producto(data)
+        
+
+        const product = new Producto({fecha_creacion, uid_estatus: estatusActivo, uid_usuario_emprendedor: uid, nombre, ...resto})
 
         await product.save()
 
         res.json({
             ok: true,    
-            body: product
+            body: 'product'
         })
 
     } catch(error) {

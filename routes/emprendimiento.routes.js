@@ -61,7 +61,7 @@ router.post('/', [
 
 // Actualizar una products - privado - cualquier persona con un token valido
 router.put('/:id', [
-    
+    validarJWT,
     check('id', 'Debe de contener un ID para hacer la modifcacion').notEmpty(),
     check('id', 'El ID no es valido').isMongoId(),
     existeIdEmprendimiento,

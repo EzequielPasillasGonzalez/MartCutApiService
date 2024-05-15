@@ -1,7 +1,7 @@
 const { Router } = require('express')
 const { check } = require('express-validator')
 
-const { validarJWT, validarCampos, esAdminRole } = require('../middlewares/index.middlewares')
+const { validarJWT, validarCampos, esAdminRole, esEmprendedorRolRecursivo } = require('../middlewares/index.middlewares')
 const { createProduct, getProducts, getProductById, updateProduct, deleteProduct, updateProductList } = require('../controllers/products.controllers')
 const { nombreTipoProductoExisteProduct, existeIDProduct } = require('../helpers/index.helpers')
 const { verficiarEstatusNombre } = require('../helpers/db_validators/estatus.helpers')
@@ -29,10 +29,8 @@ router.get('/:id', [
 // Crear una products - privado - cualquier persona con un token valido
 router.post('/', [
     validarJWT,
-    check('nombre', 'Es necesario un nombre para poder crear el producto').notEmpty(),
-    // check('nombre').custom(nombreProductExiste),
-    check('category', 'La categoria es necesaria para la creación de los productos').notEmpty(),
-    check('category').custom(nombreTipoProductoExisteProduct),
+    esEmprendedorRolRecursivo,
+    check('nombre', 'Es necesario un nombre para poder crear el producto').notEmpty(),    
     validarCampos
 ], createProduct)
 

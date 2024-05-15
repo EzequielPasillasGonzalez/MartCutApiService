@@ -1,7 +1,9 @@
 const { response } = require("express");
 
-const { Emprendimiento } = require('../models/index.models');
-const { buscarNombreEmprendimiento, obtenerEstatusNombre, getEmprendimientosById, verificarExisteNombreEmprendimiento, buscarIdEmprendimiento, getEmprendimientos, obtenerEstatusActivo } = require("../helpers/index.helpers");
+const { Emprendimiento, Usuario } = require('../models/index.models');
+const { validaEstatusActivo, buscarNombreEmprendimiento, obtenerEstatusNombre, getEmprendimientosById, verificarExisteNombreEmprendimiento, buscarIdEmprendimiento, getEmprendimientos, obtenerEstatusActivo } = require("../helpers/index.helpers");
+
+
 
 
 
@@ -14,6 +16,23 @@ const createEmprendimiento = async (req, res = response) => {
 
 
         const {uid} = req.usuario
+
+        let verficarYaCuentaConEmprendimiento = await Usuario.findById(uid)        
+
+        if(verficarYaCuentaConEmprendimiento.uid_emprendimiento){
+
+            let estaActivoEmprendimiento = await Emprendimiento.findById(verficarYaCuentaConEmprendimiento.uid_emprendimiento)            
+
+            let verificarEstatus = await validaEstatusActivo(estaActivoEmprendimiento)
+            
+            if(verificarEstatus === true){
+                return res.status(400).json({
+                    ok: false,
+                    body: 'El usuario ya cuenta con un emprendimiento activo'
+                })
+            }
+            
+        }
         
 
         const fecha_creacion = new Date()
@@ -22,7 +41,13 @@ const createEmprendimiento = async (req, res = response) => {
 
         let emprendimiento = new Emprendimiento({fecha_creacion, uid_estatus: estatusActivo._id, uid_usuario_emprendedor: uid,...resto})
 
-        await emprendimiento.save()        
+        await emprendimiento.save()           
+
+        await Usuario.findByIdAndUpdate(uid, {uid_emprendimiento: emprendimiento._id}, {new: true})
+
+        
+
+        
 
         return res.status(200).json({
             ok: true,
@@ -38,7 +63,7 @@ const createEmprendimiento = async (req, res = response) => {
 }
 
 const emprendimientosGet = async (req, res = response) => {
-    try {
+    try {        
         const usuarios = await getEmprendimientos()
 
         res.json({
@@ -96,7 +121,7 @@ const updateEmprendimientoByID = async (req, res = response) => {
         const uid_modificado_por = req.usuario.uid
         const fecha_modificacion = new Date() 
 
-        let { uid_centro_universitario, uid_tipo_entrega, uid_producto, ...resto } = req.body
+        let { uid_centro_universitario, uid_tipo_entrega, uid_producto, estatus, ...resto } = req.body
 
         objetoActualizar = {
             ...resto,
@@ -114,6 +139,12 @@ const updateEmprendimientoByID = async (req, res = response) => {
 
         if(uid_producto){
             objetoActualizar.$addToSet = { uid_producto: req.body.uid_producto }
+        }
+
+
+        if(estatus){
+            let estatusBuscado = await obtenerEstatusNombre(estatus)
+            objetoActualizar.uid_estatus= estatusBuscado._id
         }
 
 

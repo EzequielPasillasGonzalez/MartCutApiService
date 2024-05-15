@@ -11,8 +11,7 @@ const ProductoSchema = Schema({
         required: [true, 'El tipo del producto es obligatorio']
     },
     descripcion: {
-        type: String,
-        required: [true, 'La descripción del producto es obligatorio'],
+        type: String,        
     },
     cantidad: {
         type: Number,        
@@ -22,6 +21,10 @@ const ProductoSchema = Schema({
     }, 
     precio: {
         type: Number,
+    },
+    uid_usuario_emprendedor: {
+        type: Schema.Types.ObjectId,
+        ref: 'Usuario'
     },
     uid_estatus: {
         type: Schema.Types.ObjectId,

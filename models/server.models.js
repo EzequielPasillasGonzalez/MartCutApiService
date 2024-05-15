@@ -50,7 +50,8 @@ class Server {
     routes(){ //todo: Rutas 
         this.app.use(process.env.BASE_URL_AUTENTICAR, require('../routes/auth.routes'))
         // this.app.use(this.paths.buscar, require('../routes/search.routes'))
-        this.app.use(process.env.BASE_URL_PRODUCTOS, require('../routes/tipo_producto.routes'))
+        this.app.use(process.env.BASE_URL_PRODUCTOS, require('../routes/products.routes'))
+        this.app.use(process.env.BASE_URL_TIPOPRODUCTO, require('../routes/tipo_producto.routes'))
         this.app.use(process.env.BASE_URL_TIPOEMPRENDIMIENTO, require('../routes/tipo_emprendimiento.routes'))
         this.app.use(process.env.BASE_URL_EMPRENDIMIENTO, require('../routes/emprendimiento.routes'))
         this.app.use(process.env.BASE_URL_TIPOENTREGA, require('../routes/tipo_entrega.routes'))

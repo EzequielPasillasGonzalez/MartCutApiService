@@ -82,25 +82,27 @@ const esEmprendedorRolRecursivo = async (req, res = response, next) => {
                     body: 'El usuario no tiene privilegios necesarios'
                 })
             }
-        }
+        }        
         
-        if (req.baseUrl.toString() === process.env.BASE_URL_EMPRENDIMIENTO) {
+        // if (req.baseUrl.toString() === process.env.BASE_URL_EMPRENDIMIENTO) {
             
-            if (resp === true) {
+        //     if (resp === true) {                
+        //         const { uid_usuario_emprendedor } = req.emprendimiento                
+        //         if(uid_usuario_emprendedor){
+        //             if (req.usuario.uid !== uid_usuario_emprendedor.toString()) {                
+        //                 throw new Error('No tienes permiso para modificar este emprendimiento.');
+        //             }
+        //         }else{
+        //             return next()
+        //         }                                
+        //     }            
+        // }
 
-                const { uid_usuario_emprendedor } = req.emprendimiento
-                if (req.usuario.uid !== uid_usuario_emprendedor.toString()) {                
-                    throw new Error('No tienes permiso para modificar este emprendimiento.');
-                }
-            }            
-        }
 
 
 
 
-
-        if (resp === true) {
-
+        if (resp === true) {            
             return next()
         }
 

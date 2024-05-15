@@ -139,10 +139,10 @@ const getRole = async () => {
   const verificarRolEmprendedor = async (estatusVerificar = "") => {
     try {
       const rolActivo = await Role.findById("662c21c97b9e30d121ec7671");
-      const rolBuscar = await Role.findById(estatusVerificar);
+      const rolBuscar = await Role.findById(estatusVerificar);      
   
   
-      if (rolActivo._id.toString() !== rolBuscar._id.toString()) {
+      if (rolActivo._id.toString() !== rolBuscar._id.toString()) {        
         throw new Error(`Este tipo de usuario no puede realizar este cambio`);
       }
       return true;
