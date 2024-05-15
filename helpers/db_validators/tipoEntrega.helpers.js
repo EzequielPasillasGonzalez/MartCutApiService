@@ -8,12 +8,9 @@ const {
 const getTipoEntregaById = async (id) => {
 
     try {
-        const query = await TipoEntrega.aggregate([
-            {
-                $match: {
-                    _id: new ObjectId(id) // Usa 'new' para crear una nueva instancia de ObjectId
-                }
-            },
+        let estatusActivo = new ObjectId('662857091815a1aa5532119a')
+        let idRol = new ObjectId(id)
+        const query = await TipoEntrega.aggregate([            
             {
                 $lookup: {
                     from: "estatus",
@@ -22,6 +19,14 @@ const getTipoEntregaById = async (id) => {
                     as: "datos_estatus",
                 },
             },
+            {
+                $match: {
+                  $and: [
+                    {_id: idRol},
+                    {"datos_estatus._id": estatusActivo} // o 'inactivo'
+                  ]                
+                }
+              },  
             {
                 $lookup: {
                     from: "usuarios",
@@ -54,6 +59,7 @@ const getTipoEntregaById = async (id) => {
 const getTipoEntregaHelper = async () => {
 
     try {
+        let estatusActivo = new ObjectId('662857091815a1aa5532119a')
         const query = await TipoEntrega.aggregate([
             {
                 $lookup: {
@@ -63,6 +69,11 @@ const getTipoEntregaHelper = async () => {
                     as: "datos_estatus",
                 },
             },
+            {
+                $match: {
+                    "datos_estatus._id": estatusActivo // o 'inactivo'               
+                }
+              },  
             {
                 $lookup: {
                     from: "usuarios",

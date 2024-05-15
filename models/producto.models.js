@@ -7,8 +7,7 @@ const ProductoSchema = Schema({
     },
     uid_tipo_producto: {
         type: Schema.Types.ObjectId,
-        ref: 'Tipo_producto',
-        required: [true, 'El tipo del producto es obligatorio']
+        ref: 'Tipo_producto',        
     },
     descripcion: {
         type: String,        

@@ -9,6 +9,7 @@ const getRole = async () => {
 
 
     try {
+      let estatusActivo = new ObjectId('662857091815a1aa5532119a')
       const role = await Role.aggregate([
         {
           $lookup: {
@@ -17,7 +18,12 @@ const getRole = async () => {
             foreignField: "_id",
             as: "datos_estatus",
           },          
-        },
+        },        
+        {
+          $match: {
+            "datos_estatus._id": estatusActivo
+          }
+        }, 
         {
           $lookup: {
               from: "usuarios",
@@ -49,13 +55,9 @@ const getRole = async () => {
   const getRolById = async (id) => {
 
     try {
-      const query = await Role.aggregate([
-        {
-          $match: {
-            _id: new ObjectId(id) // Usa 'new' para crear una nueva instancia de ObjectId
-          }
-        },
-  
+      let estatusActivo = new ObjectId('662857091815a1aa5532119a')
+      let idRol = new ObjectId(id)
+      const query = await Role.aggregate([          
   
         {
           $lookup: {
@@ -65,6 +67,14 @@ const getRole = async () => {
             as: "datos_estatus",
           },
         },
+        {
+          $match: {
+            $and: [
+              {_id: idRol},
+              {"datos_estatus._id": estatusActivo} // o 'inactivo'
+            ]                
+          }
+        }, 
         {
           $lookup: {
               from: "usuarios",

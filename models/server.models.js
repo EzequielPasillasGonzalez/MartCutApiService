@@ -56,7 +56,7 @@ class Server {
         this.app.use(process.env.BASE_URL_EMPRENDIMIENTO, require('../routes/emprendimiento.routes'))
         this.app.use(process.env.BASE_URL_TIPOENTREGA, require('../routes/tipo_entrega.routes'))
         this.app.use(process.env.BASE_URL_ROL, require('../routes/role.routes'))
-        // this.app.use(this.paths.uploads, require('../routes/uploads.routes'))
+        this.app.use(process.env.BASE_URL_UPLOADS, require('../routes/uploads.routes'))
         this.app.use(process.env.BASE_URL_USUARIO, require('../routes/user.routes'))
         this.app.use(process.env.BASE_URL_ESTATUS, require('../routes/estatus.routes'))
         this.app.use(process.env.BASE_URL_CENTROSUNIVERSITARIOS, require('../routes/centros_universitarios.routes'))

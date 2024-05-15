@@ -83,6 +83,7 @@ const verificarExisteNombreCentroUniversitario = async (nombre = "") => {
 
 const getCentrosUniversitariosDB = async () => {
     try {
+        let estatusActivo = new ObjectId('662857091815a1aa5532119a')
         const query = await CentroUniversitario.aggregate([
             {
                 $lookup: {
@@ -92,6 +93,11 @@ const getCentrosUniversitariosDB = async () => {
                     as: "datos_estatus",
                 },
             },
+            {
+                $match: {
+                  "datos_estatus._id": estatusActivo
+                }
+              }, 
             {
                 $lookup: {
                     from: "usuarios",
@@ -104,6 +110,7 @@ const getCentrosUniversitariosDB = async () => {
                 $project: {
                     nombre: 1,
                     abreviado: 1,
+                    url_img: 1,  
                     domicilio: 1,
                     _id: 0,
                     uid: "$_id",
@@ -125,12 +132,9 @@ const getCentrosUniversitariosDB = async () => {
 
 const getCentroUniversitarioById = async (id) => {
     try {
-        const query = await CentroUniversitario.aggregate([
-            {
-                $match: {
-                    _id: new ObjectId(id), // Usa 'new' para crear una nueva instancia de ObjectId
-                },
-            },
+        let estatusActivo = new ObjectId('662857091815a1aa5532119a')
+        let idCentro = new ObjectId(id)
+        const query = await CentroUniversitario.aggregate([            
             {
                 $lookup: {
                     from: "estatus",
@@ -139,6 +143,14 @@ const getCentroUniversitarioById = async (id) => {
                     as: "datos_estatus",
                 },
             },
+            {
+                $match: {
+                  $and: [
+                    {_id: idCentro},
+                    {"datos_estatus._id": estatusActivo} // o 'inactivo'
+                  ]                
+                }
+              }, 
             {
                 $lookup: {
                     from: "usuarios",
@@ -152,6 +164,7 @@ const getCentroUniversitarioById = async (id) => {
                     _id: 0,
                     uid: "$_id", 
                     nombre: 1,
+                    url_img: 1,  
                     abreviado: 1,
                     domicilio: 1,                                       
                     nombre_estatus: { $arrayElemAt: ["$datos_estatus.nombre", 0] }, // Asume que el campo del nombre del estatus es 'nombre'
@@ -174,12 +187,8 @@ const getCentroUniversitarioByNombreDB = async (nombre) => {
     try {
 
         const regex = new RegExp(nombre, "i")
-        const query = await CentroUniversitario.aggregate([
-            {
-                $match: {
-                    nombre: regex  // Usa 'new' para crear una nueva instancia de ObjectId
-                }
-            },
+        let estatusActivo = new ObjectId('662857091815a1aa5532119a')
+        const query = await CentroUniversitario.aggregate([            
             {
                 $lookup: {
                     from: "estatus",
@@ -188,6 +197,14 @@ const getCentroUniversitarioByNombreDB = async (nombre) => {
                     as: "datos_estatus",
                 },
             },
+            {
+                $match: {
+                  $and: [
+                    {nombre: regex},
+                    {"datos_estatus._id": estatusActivo} // o 'inactivo'
+                  ]                
+                }
+              }, 
             {
                 $lookup: {
                     from: "usuarios",
@@ -202,7 +219,8 @@ const getCentroUniversitarioByNombreDB = async (nombre) => {
                     uid: "$_id", 
                     nombre: 1,
                     abreviado: 1,
-                    domicilio: 1,                                       
+                    domicilio: 1,        
+                    url_img: 1,                                 
                     nombre_estatus: { $arrayElemAt: ["$datos_estatus.nombre", 0] }, // Asume que el campo del nombre del estatus es 'nombre'
                     uid_estatus: { $arrayElemAt: ["$datos_estatus._id", 0] },
                     modificado_por: { $arrayElemAt: ["$modificado_por.nombre", 0] },

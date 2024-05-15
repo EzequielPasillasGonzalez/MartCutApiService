@@ -5,10 +5,7 @@ const { Usuario, Category, Role, Producto } = require("../models/index.models");
 const { ObjectId } = require('mongoose').Types
 
 const coleccionesPermitidas = [
-    'usuarios',
-    'categoria',
-    'productos',
-    'roles'
+    'usuario', 'productos', 'emprendimiento', 'centrosUniversitarios'
 ]
 
 const buscarUsuarios = async (termino = '', res = response) => {

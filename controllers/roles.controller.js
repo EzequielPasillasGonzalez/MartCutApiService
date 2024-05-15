@@ -7,22 +7,15 @@ const roleGet = async (req, res = response) =>{
 
     try {
         
-    // const state = {state : true}
-
-    // let {limit, from} = req.query
-
-    // // Verificar y asignar valores predeterminados si son cadenas vacías o no están definidos
-    // limit = limit === '' || limit === undefined ? 5 : Number(limit);
-    // from = from === '' || from === undefined ? 0 : Number(from);
-
-    // const [total, role] = await Promise.all([
-    //     Role.countDocuments(state),
-    //     Role.find(state)
-    //                     .skip(Number(from))
-    //                     .limit(Number(limit))
-    // ])        
 
     const role = await getRole()
+
+    if(role.length === 0){
+        return res.json({
+            ok: false,
+            body: 'No hay datos con esta caracteristica'
+        })    
+    } 
 
     res.json({
         ok: true,
@@ -42,6 +35,13 @@ const getRolByIDAll = async (req, res = response) => {
         const { id } = req.params
 
         const category = await Role.findById(id)
+
+        if(category.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
 
         res.json({
             ok: true,
@@ -63,6 +63,13 @@ const getRolByNombreAll = async (req, res = response) => {
 
         const rol = await obtenerRolNombre(nombre)
 
+        if(rol.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
+
         res.json({
             ok: true,
             body: rol
@@ -82,6 +89,13 @@ const getRolByNombre = async (req, res = response) => {
         const { nombre } = req.body
 
         const rol = await obtenerRolNombre(nombre)
+
+        if(rol.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
         
         let rolBuscado
         if(rol){
@@ -92,6 +106,13 @@ const getRolByNombre = async (req, res = response) => {
                 body: `Ocurrio un problema con el servidor, contacta con el administrador.`
             })
         }
+
+        if(rolBuscado.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
 
         res.json({
             ok: true,

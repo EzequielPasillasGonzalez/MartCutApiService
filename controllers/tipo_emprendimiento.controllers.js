@@ -47,6 +47,13 @@ const getTiposEmprendimiento = async (req, res = response) => {
 
         const tipoEmprendimiento = await getTipoEmprendimiento()
 
+        if(tipoEmprendimiento.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
+
         res.json({
             ok: true,
             body: tipoEmprendimiento
@@ -77,6 +84,13 @@ const getTipoEmprendimientoByNombre = async (req, res = response) => {
             })
         }
 
+        if(categoriaTipoEmprendimiento.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
+
         res.json({
             ok: true,
             body: categoriaTipoEmprendimiento
@@ -97,6 +111,13 @@ const getTipoEmprendimientoByNombreAll = async (req, res = response) => {
 
         const tipoEmprendimiento = await buscarNombreTipoEmprendimiento(nombre)
 
+        if(tipoEmprendimiento.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
+
         res.json({
             ok: true,
             body: tipoEmprendimiento
@@ -115,6 +136,13 @@ const getTipoEmprendimientoByID = async (req, res = response) => {
         const { id } = req.params
 
         const tipoEmprendimiento = await getTipoEmprendimientoById(id)
+
+        if(tipoEmprendimiento.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
 
         res.json({
             ok: true,
@@ -135,6 +163,13 @@ const getTipoEmprendimientoByIDAll = async (req, res = response) => {
         const { id } = req.params
 
         const tipoEmprendimiento = await TipoEmprendimiento.findById(id)
+
+        if(tipoEmprendimiento.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
 
         res.json({
             ok: true,
@@ -175,6 +210,13 @@ const updateTipoEmprendimientoByID = async (req, res = response) => {
                 body: `Ocurrio un problema con el servidor, contacta con el administrador.`
             })
         }
+
+        if(tipoID.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
 
         res.json({
             ok: true,

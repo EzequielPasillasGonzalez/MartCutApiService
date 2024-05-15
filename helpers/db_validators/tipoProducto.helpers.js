@@ -8,6 +8,8 @@ const {
 const getTipoProductoById = async (id) => {
 
     try {
+        let estatusActivo = new ObjectId('662857091815a1aa5532119a')
+        let idRol = new ObjectId(id)
         const query = await TipoProucto.aggregate([
             {
                 $match: {
@@ -22,6 +24,14 @@ const getTipoProductoById = async (id) => {
                     as: "datos_estatus",
                 },
             },
+            {
+                $match: {
+                  $and: [
+                    {_id: idRol},
+                    {"datos_estatus._id": estatusActivo} // o 'inactivo'
+                  ]                
+                }
+              },  
             {
                 $lookup: {
                     from: "usuarios",
@@ -54,6 +64,7 @@ const getTipoProductoById = async (id) => {
 const getTipoProducto = async () => {
 
     try {
+        let estatusActivo = new ObjectId('662857091815a1aa5532119a')
         const query = await TipoProucto.aggregate([
             {
                 $lookup: {
@@ -63,6 +74,11 @@ const getTipoProducto = async () => {
                     as: "datos_estatus",
                 },
             },
+            {
+                $match: {
+                  "datos_estatus._id": estatusActivo
+                }
+              }, 
             {
                 $lookup: {
                     from: "usuarios",

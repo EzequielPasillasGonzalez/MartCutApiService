@@ -29,7 +29,7 @@ const validarJWT = async (req = request, res = response, next) =>{
             })
         }
 
-        const {nombre, correo, uid_rol} = usuario
+        const {nombre, correo, uid_rol, uid_emprendimiento} = usuario
         
         const estatusUsuario = await verificarEstatusActivo(usuario)        
 
@@ -42,7 +42,7 @@ const validarJWT = async (req = request, res = response, next) =>{
         }
     
         // Guardar el usuario        
-        req.usuario = {nombre, correo, uid_rol, uid} // Se le manda el uid por el request para los siguientes controladores
+        req.usuario = {nombre, correo, uid_rol, uid, uid_emprendimiento} // Se le manda el uid por el request para los siguientes controladores
         
 
         next()

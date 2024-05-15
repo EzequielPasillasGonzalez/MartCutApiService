@@ -47,6 +47,13 @@ const getCategories = async (req, res = response) => {
 
         const tipoProducto = await getTipoProducto()
 
+        if(tipoProducto.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
+
         res.json({
             ok: true,
             body: tipoProducto
@@ -68,6 +75,13 @@ const getCategoryByID = async (req, res = response) => {
 
         const category = await getTipoProductoById(id)
 
+        if(category.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
+
         res.json({
             ok: true,
             body: category
@@ -88,6 +102,13 @@ const getCategoryByIDAll = async (req, res = response) => {
 
         const category = await TipoProucto.findById(id)
 
+        if(category.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
+
         res.json({
             ok: true,
             body: category
@@ -107,6 +128,13 @@ const getCategoryByNombre = async (req, res = response) => {
         const { nombre } = req.body
 
         const category = await nombreTipoProductoExisteProduct(nombre)
+
+        if(category.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
         
         let categoria
         if(category){
@@ -117,6 +145,13 @@ const getCategoryByNombre = async (req, res = response) => {
                 body: `Ocurrio un problema con el servidor, contacta con el administrador.`
             })
         }
+
+        if(categoria.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
 
         res.json({
             ok: true,
@@ -137,6 +172,13 @@ const getCategoryByNombreAll = async (req, res = response) => {
         const { nombre } = req.body
 
         const category = await nombreTipoProductoExisteProduct(nombre)
+
+        if(category.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
 
         res.json({
             ok: true,

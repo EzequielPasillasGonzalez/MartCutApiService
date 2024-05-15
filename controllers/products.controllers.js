@@ -1,32 +1,50 @@
 const { response } = require("express");
 
-const { Producto } = require('../models/index.models');
-const { buscarCorreoUserModify, buscarCategoriaModificarProducto } = require("../helpers/index.helpers");
-const { obtenerEstatusActivo } = require("../helpers/db_validators/estatus.helpers");
+const { Producto, Emprendimiento } = require('../models/index.models');
+const { getProductos, getProductosLimpios, getProductosPorNombre, getProductosById, obtenerEstatusNombre, obtenerEstatusActivo, nombreTipoProductoExisteProduct, buscarCorreoUserModify, buscarCategoriaModificarProducto } = require("../helpers/index.helpers");
+
 
 const createProduct = async(req, res = response) =>{
     try {
         const {nombre, tipo_producto,...resto} = req.body
 
-        const {uid} = req.usuario
+        const {uid, uid_emprendimiento} = req.usuario        
 
-        const fecha_creacion = new Date()  
-        
-        const estatusActivo = await obtenerEstatusActivo()                
+        const fecha_creacion = new Date()
+
+        const uid_estatus = await obtenerEstatusActivo()
+
+
+
+        objetoCrear = {
+            ...resto,
+            fecha_creacion,
+            uid_estatus,
+            uid_usuario_emprendedor: uid,
+            nombre
+        }
+
+        objetoActualizar = {}
 
         if(tipo_producto){
             
+            const tipoProducto = await nombreTipoProductoExisteProduct(tipo_producto)
+            objetoCrear.uid_tipo_producto = tipoProducto
         }
 
-        
-
-        const product = new Producto({fecha_creacion, uid_estatus: estatusActivo, uid_usuario_emprendedor: uid, nombre, ...resto})
+        const product = new Producto(objetoCrear)
 
         await product.save()
 
+        if(uid_emprendimiento){
+            objetoActualizar.$addToSet = { uid_producto: product._id }            
+        }
+
+        const emprendimiento = await Emprendimiento.findByIdAndUpdate(uid_emprendimiento, objetoActualizar, { new: true });        
+
         res.json({
-            ok: true,    
-            body: 'product'
+            ok: true,
+            body: `El ${product.nombre} ha sido creado exitosamente`
         })
 
     } catch(error) {
@@ -40,29 +58,66 @@ const createProduct = async(req, res = response) =>{
 const getProducts = async (req, res = response) =>{
     try {
 
-        const query = {state: true}
+        const productos = await getProductos()
 
-        // let { limit, from} = req.query
-    
-        // limit = limit === '' || limit === undefined ? 5 : Number(limit);
-        // from = from === '' || from === undefined ? 0 : Number(from);        
-    
-        const [total, product] = await Promise.all([
-            Producto.countDocuments(query),
-            Producto.find(query)
-                                // .limit(Number(limit))
-                                // .skip(Number(from))
-                                .populate('category', 'nombre')
-                                .populate('userCreate', 'nombre')
-                                .populate('userModify', 'nombre')
-        ])
+        if(productos.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
 
         res.json({
-            ok: true,                
-            body: {
-                total,
-                product
-            }
+            ok: true,
+            body: productos
+        })
+    } catch(error) {
+        res.json({
+            ok: false,
+            body: `Error al acceder a la base de datos ${error}`
+        })
+    }
+}
+
+const getProductsAllLimpios = async (req, res = response) =>{
+    try {
+
+        const productos = await getProductosLimpios()
+
+        if(productos.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
+
+        res.json({
+            ok: true,
+            body: productos
+        })
+    } catch(error) {
+        res.json({
+            ok: false,
+            body: `Error al acceder a la base de datos ${error}`
+        })
+    }
+}
+
+const getProductsAll = async (req, res = response) =>{
+    try {
+
+        const productos = await Producto.find()
+
+        if(productos.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
+
+        res.json({
+            ok: true,
+            body: productos
         })
     } catch(error) {
         res.json({
@@ -73,53 +128,17 @@ const getProducts = async (req, res = response) =>{
 }
 
 const getProductById = async ( req, res = response) => {
-    try {
-        
-        const {id} = req.params        
+    try {        
 
-        const resultadoBusqueda = await Producto.findById(id)
-                                                            .populate('category', 'nombre') 
-                                                            .populate('userCreate', 'nombre') 
-                                                            .populate('userModify', 'nombre')
+        const producto = await getProductosById(req.producto._id)
 
-        res.json({
-            ok: true,
-            body: resultadoBusqueda
-        })
+        if(productos.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
 
-    } catch(error) {
-        res.json({
-            ok: false,
-            body: `Error al acceder a la base de datos ${error}`
-        })
-    }
-}
-
-const updateProduct = async ( req, res = response) => {
-    try {
-        
-        const {correo} = req.usuario
-        const usuario =  await buscarCorreoUserModify(correo)
-
-        const {id} = req.params
-
-        let { category, ...resto} = req.body
-
-        const categoria = await buscarCategoriaModificarProducto((category))        
-
-        const modifyDate = new Date()             
-        
-        
-
-        resto.modifyDate = modifyDate    
-        resto.category = categoria
-        resto.userModify = usuario
-
-        const producto = await Producto.findByIdAndUpdate(id, resto, {new : true}) //** Con el new : true trae el nuevo valor */
-                                                .populate('category', 'nombre') 
-                                                .populate('userCreate', 'nombre') 
-                                                .populate('userModify', 'nombre correo')
-                                                
         res.json({
             ok: true,
             body: producto
@@ -133,68 +152,11 @@ const updateProduct = async ( req, res = response) => {
     }
 }
 
-const updateProductList = async ( req, res = response) => {
-    
-    try {
-        
-        const {order} = req.body
-
-        let newProduct
-
-
-        for (const product of order) {
-            let {id, cantidad, ...resto} = product
-
-            let nuevaCantidad = cantidad - 1;
-
-            // Actualizar la cantidad en el objeto product
-            product.cantidad = nuevaCantidad;
-
-            newProduct = await Producto.findByIdAndUpdate(id, product, {new : true}) 
-
-        }
-
+const getProductByIdAll = async ( req, res = response) => {
+    try {                        
         res.json({
             ok: true,
-            body: 'Compra realizada'
-        })
-    
-
-    } catch (error) {
-        res.json({
-            ok: false,
-            body: `Error al acceder a la base de datos ${error}`
-        })
-    }
-
-
-}
-
-const deleteProduct = async ( req, res = response) => {
-    try {        
-
-        // const {correo} = req.usuario
-        // const usuario =  await buscarCorreoUserModify(correo)
-
-        const { id } = req.params
-
-        let datos = { state: false}
-
-        const modifyDate = new Date()
-
-        // datos.userModify = usuario
-        // datos.modifyDate = modifyDate
-
-        const product = await Producto.findByIdAndUpdate(id, datos, {new : true})
-                                                        .populate('category', 'nombre') 
-                                                        // .populate('userCreate', 'nombre') 
-                                                        // .populate('userModify', 'nombre')
-
-
-
-        res.json({
-            ok: true,
-            body: product
+            body: req.producto
         })
 
     } catch(error) {
@@ -205,11 +167,96 @@ const deleteProduct = async ( req, res = response) => {
     }
 }
 
+const updateProduct = async ( req, res = response) => {
+    try {
+
+        
+        const {_id: uid_producto} = req.producto
+
+        const uid_modificado_por = req.usuario.uid
+
+        const {uid_estatus, fecha_creacion, ...resto} = req.body
+
+        const fecha_modificacion = new Date() 
+
+        const producto = await Producto.findByIdAndUpdate(uid_producto, { fecha_modificacion, uid_modificado_por, ...resto }, {new: true})
+
+
+        res.json({
+            ok: true,
+            body: producto
+        })
+
+    } catch(error) {
+        res.json({
+            ok: false,
+            body: `Error al acceder a la base de datos ${error}`
+        })
+    }
+}
+
+const deleteProduct = async ( req, res = response) => {
+    try {            
+
+        const {_id: uid_producto} = req.producto
+        const uid_modificado_por = req.usuario.uid
+        const fecha_modificacion = new Date() 
+
+        const {estatus} = req.body
+
+        const estatusBuscado = await obtenerEstatusNombre(estatus)                
+
+
+        const producto = await Producto.findByIdAndUpdate(uid_producto, { uid_estatus: estatusBuscado._id, fecha_modificacion, uid_modificado_por }, {new: true})
+
+        res.json({
+            ok: true,
+            body: producto
+        })
+
+    } catch (error) {
+        res.json({
+            ok: false,
+            body: `Ocurrio un problema con el servidor, contacta con el administrador. ${error.message}`
+        })
+    }
+}
+
+const getProductosByNombre = async (req, res = response) => {
+    try {
+
+        const { nombre } = req.body        
+        
+        let productos = await getProductosPorNombre(nombre)
+        
+        if(productos.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay productos con esta caracteristica'
+            })    
+        } 
+
+        res.json({
+            ok: true,
+            body: productos
+        })
+
+    } catch (error) {
+        res.json({
+            ok: false,
+            body: `Ocurrio un problema con el servidor, contacta con el administrador. ${error.message}`
+        })
+    }
+}
+
 module.exports = {
     createProduct,
     getProducts,
+    getProductsAll,
+    getProductsAllLimpios,
     getProductById,
-    updateProduct,
-    updateProductList,
-    deleteProduct
+    getProductByIdAll,
+    updateProduct,    
+    deleteProduct,
+    getProductosByNombre
 }

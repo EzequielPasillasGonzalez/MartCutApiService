@@ -66,6 +66,13 @@ const emprendimientosGet = async (req, res = response) => {
     try {        
         const usuarios = await getEmprendimientos()
 
+        if(usuarios.length === 0){
+            return res.json({
+                ok: true,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
+
         res.json({
             ok: true,
             body: usuarios,
@@ -83,6 +90,13 @@ const getEmprendimientoById = async (req, res = response) => {
     try {
         
         const emprendimiento = await getEmprendimientosById(req.params.id)
+
+        if(emprendimiento.length === 0){
+            return res.json({
+                ok: true,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
         res.json({
             ok: true,
             body: emprendimiento
@@ -179,6 +193,13 @@ const getEmprendimientoByNombre = async (req, res = response) => {
                 body: `Ocurrio un problema con el servidor, contacta con el administrador.`
             })
         }
+
+        if(emprendimiento.length === 0){
+            return res.json({
+                ok: true,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
 
         res.json({
             ok: true,

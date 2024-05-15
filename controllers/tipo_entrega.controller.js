@@ -48,6 +48,13 @@ const getTipoEntregas = async (req, res = response) => {
 
         const tipoProducto = await getTipoEntregaHelper()
 
+        if(tipoProducto.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
+
         res.json({
             ok: true,
             body: tipoProducto
@@ -69,6 +76,13 @@ const getTipoEntregaByID = async (req, res = response) => {
 
         const category = await getTipoEntregaById(id)
 
+        if(category.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
+
         res.json({
             ok: true,
             body: category
@@ -88,6 +102,13 @@ const getTipoEntregaByIDAll = async (req, res = response) => {
         const { id } = req.params
 
         const category = await TipoEntrega.findById(id)
+
+        if(category.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
 
         res.json({
             ok: true,
@@ -109,6 +130,13 @@ const getTipoEntregaByNombre = async (req, res = response) => {
 
         const category = await nombreTipoEntregaExisteProducto(nombre)
 
+        if(category.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
+
         let categoria
         if (category) {
             categoria = await getTipoEntregaById(category._id.toString())
@@ -118,6 +146,13 @@ const getTipoEntregaByNombre = async (req, res = response) => {
                 body: `Ocurrio un problema con el servidor, contacta con el administrador.`
             })
         }
+
+        if(categoria.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
 
         res.json({
             ok: true,
@@ -138,6 +173,13 @@ const getTipoEntregaByNombreAll = async (req, res = response) => {
         const { nombre } = req.body
 
         const category = await nombreTipoEntregaExisteProducto(nombre)
+
+        if(category.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
 
         res.json({
             ok: true,

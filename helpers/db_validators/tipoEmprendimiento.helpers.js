@@ -8,12 +8,9 @@ const {
 const getTipoEmprendimientoById = async (id) => {
 
   try {
-    const query = await TipoEmprendimiento.aggregate([
-      {
-        $match: {
-          _id: new ObjectId(id) // Usa 'new' para crear una nueva instancia de ObjectId
-        }
-      },
+    let estatusActivo = new ObjectId('662857091815a1aa5532119a')
+      let idRol = new ObjectId(id)
+    const query = await TipoEmprendimiento.aggregate([      
       {
         $lookup: {
           from: "estatus",
@@ -22,6 +19,14 @@ const getTipoEmprendimientoById = async (id) => {
           as: "datos_estatus",
         },
       },
+      {
+        $match: {
+          $and: [
+            {_id: idRol},
+            {"datos_estatus._id": estatusActivo} // o 'inactivo'
+          ]                
+        }
+      }, 
       {
         $lookup: {
           from: "usuarios",
@@ -96,6 +101,7 @@ const verificarExisteNombreTipoEmprendimiento = async (nombre = "") => {
 const getTipoEmprendimiento = async () => {
 
   try {
+    let estatusActivo = new ObjectId('662857091815a1aa5532119a')
     const query = await TipoEmprendimiento.aggregate([
       {
         $lookup: {
@@ -105,6 +111,12 @@ const getTipoEmprendimiento = async () => {
           as: "datos_estatus",
         },
       },
+      {
+        $match: {            
+            "datos_estatus._id": estatusActivo // o 'inactivo'
+          
+        }
+      }, 
       {
         $lookup: {
           from: "usuarios",

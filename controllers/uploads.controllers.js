@@ -6,7 +6,8 @@ const cloudinary = require('cloudinary').v2
 cloudinary.config( process.env.CLOUDINARY_URL )
 
 const { subirArchivo, existeID } = require("../helpers/index.helpers");
-const { Usuario, Producto } = require("../models/index.models");
+const { Usuario, Producto, Emprendimiento, CentroUniversitario } = require("../models/index.models");
+const { validaEstatusActivo } = require("../helpers/db_validators/estatus.helpers");
 
 const cargarArchivos = async (req, res = response) => {
     
@@ -136,9 +137,10 @@ const actualizarImagenCloudinary = async (req, res = response) => {
         const { id, coleccion} = req.params
         
         let modelo
+        let verificarEstatus
 
         switch (coleccion) {
-            case 'usuarios':
+            case 'usuario':
                     modelo = await Usuario.findById(id)
 
                     if(!modelo){
@@ -148,10 +150,12 @@ const actualizarImagenCloudinary = async (req, res = response) => {
                         })
                     }
 
-                    if(modelo.state === false){
+                    verificarEstatus = await validaEstatusActivo(modelo)
+            
+                    if(verificarEstatus === false){
                         return res.status(400).json({
                             ok: false,
-                            body: `El usuario ${modelo.nombre} esta dado de baja en la base de datos`
+                            body: `El ${modelo.nombre} esta dado de baja en la base de datos`
                         })
                     }
 
@@ -170,10 +174,56 @@ const actualizarImagenCloudinary = async (req, res = response) => {
                         })
                     }
 
-                    if(modelo.state === false){
+                    verificarEstatus = await validaEstatusActivo(modelo)
+            
+                    if(verificarEstatus === false){
                         return res.status(400).json({
                             ok: false,
-                            body: `El usuario ${modelo.nombre} esta dado de baja en la base de datos`
+                            body: `El ${modelo.nombre} esta dado de baja en la base de datos`
+                        })
+                    }
+
+                break;
+                case 'emprendimiento':
+                    modelo = await Emprendimiento.findById(id)
+
+                    if(!modelo){
+                        return res.status(400).json({
+                            ok: false,
+                            body: `No existe un emprendimiento con el id ${id}`
+                        })
+                    }
+
+                    verificarEstatus = await validaEstatusActivo(modelo)
+            
+                    if(verificarEstatus === false){
+                        return res.status(400).json({
+                            ok: false,
+                            body: `El ${modelo.nombre} esta dado de baja en la base de datos`
+                        })
+                    }
+
+                    
+
+                break;
+
+            case 'centrosUniversitarios':
+                    
+                    modelo = await CentroUniversitario.findById(id)
+
+                    if(!modelo){
+                        return res.status(400).json({
+                            ok: false,
+                            body: `No existe un centro universitario con el id ${id}`
+                        })
+                    }
+
+                    verificarEstatus = await validaEstatusActivo(modelo)
+            
+                    if(verificarEstatus === false){
+                        return res.status(400).json({
+                            ok: false,
+                            body: `El ${modelo.nombre} esta dado de baja en la base de datos`
                         })
                     }
 
@@ -182,15 +232,15 @@ const actualizarImagenCloudinary = async (req, res = response) => {
             default:
                     return res.status(500).json({
                         ok: false,
-                        body: 'Aun no programo esto'
+                        body: 'No se encontraron los datos en la BD'
                     })           
         }
 
         //Limpiar imagenes previas
-        if(modelo.img){
+        if(modelo.url_img){
 
             // Borrar la imagen del servidor
-            const nombreArr = modelo.img.split('/')
+            const nombreArr = modelo.url_img.split('/')
             const nombre = nombreArr[ nombreArr.length - 1]
             const [ public_id ] = nombre.split('.')
 
@@ -201,13 +251,14 @@ const actualizarImagenCloudinary = async (req, res = response) => {
 
         const { secure_url } = await cloudinary.uploader.upload( tempFilePath )            
 
-        modelo.img = secure_url
+        modelo.url_img = secure_url
 
-        await modelo.save()
+        await modelo.save()        
 
-        res.json(
-            modelo
-        )
+        res.status(200).json({
+            ok: true,
+            body: modelo
+        })
 
     } catch(error) {
         

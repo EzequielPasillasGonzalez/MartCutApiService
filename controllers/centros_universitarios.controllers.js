@@ -2,7 +2,6 @@ const { response } = require("express");
 
 const { CentroUniversitario } = require('../models/index.models');
 const { getCentroUniversitarioByNombreDB, existeIdCentroUniversitario, getCentroUniversitarioById, buscarNombreCentroUniversitario, getCentrosUniversitariosDB, obtenerEstatusNombre, buscarNombreTipoEmprendimiento, obtenerEstatusInactivo, obtenerEstatusActivo, getTipoEmprendimiento } = require("../helpers/index.helpers");
-const {  } = require("../helpers/db_validators/centroUniversitario.helpers");
 
 
 
@@ -52,6 +51,13 @@ const getCentrosUniversitarios = async (req, res = response) => {
 
         const tipoEmprendimiento = await getCentrosUniversitariosDB()
 
+        if(tipoEmprendimiento.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay centros universitarios con esta caracteristica'
+            })    
+        } 
+
         res.json({
             ok: true,
             body: tipoEmprendimiento
@@ -82,6 +88,13 @@ const getCentroUniversitarioByNombre = async (req, res = response) => {
         //     })
         // }        
 
+        if(centro_universitario.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay productos con esta caracteristica'
+            })    
+        } 
+
         res.json({
             ok: true,
             body: centro_universitario
@@ -101,6 +114,13 @@ const getCentroUniversitarioByNombreAll = async (req, res = response) => {
         const { nombre } = req.body
 
         const centro_universitario = await buscarNombreCentroUniversitario(nombre)
+
+        if(centro_universitario.length === 0){
+            return res.json({
+                ok: false,
+                body: 'No hay datos con esta caracteristica'
+            })    
+        } 
 
         res.json({
             ok: true,

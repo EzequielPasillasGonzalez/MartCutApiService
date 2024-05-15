@@ -48,6 +48,7 @@ const getUsuariosId = async (id) => {
                     apellido_materno: 1,
                     correo: 1,
                     celular: 1,
+                    url_img: 1,  
                     nombre_estatus: { $arrayElemAt: ["$datos_estatus.nombre", 0] }, // Asume que el campo del nombre del estatus es 'nombre'                            
                     uid_estatus: { $arrayElemAt: ["$datos_estatus._id", 0] },
                     nombre_rol: { $arrayElemAt: ["$datos_rol.nombre", 0] }, // Asume que el campo del nombre del estatus es 'nombre'                            
@@ -72,13 +73,8 @@ const getUsuariosNombre = async (nombre) => {
     try {
 
         const regex = new RegExp(nombre, "i");
-
-        const usuarios = await Usuario.aggregate([
-            {
-                $match: {
-                    nombre: regex  // Usa 'new' para crear una nueva instancia de ObjectId
-                }
-            },
+        let estatusActivo = new ObjectId('662857091815a1aa5532119a')
+        const usuarios = await Usuario.aggregate([            
             {
                 $lookup: {
                     from: "estatus",
@@ -87,6 +83,14 @@ const getUsuariosNombre = async (nombre) => {
                     as: "datos_estatus",
                 },
             },
+            {
+                $match: {
+                  $and: [
+                    {nombre: regex},
+                    {"datos_estatus._id": estatusActivo} // o 'inactivo'
+                  ]                
+                }
+              }, 
             {
                 $lookup: {
                     from: "roles",
@@ -112,6 +116,7 @@ const getUsuariosNombre = async (nombre) => {
                     apellido_materno: 1,
                     correo: 1,
                     celular: 1,
+                    url_img: 1,  
                     nombre_estatus: { $arrayElemAt: ["$datos_estatus.nombre", 0] }, // Asume que el campo del nombre del estatus es 'nombre'                            
                     uid_estatus: { $arrayElemAt: ["$datos_estatus._id", 0] },
                     nombre_rol: { $arrayElemAt: ["$datos_rol.nombre", 0] }, // Asume que el campo del nombre del estatus es 'nombre'                            
@@ -134,6 +139,7 @@ const getUsuarios = async () => {
 
     try {
 
+        let estatusActivo = new ObjectId('662857091815a1aa5532119a')
         const usuarios = await Usuario.aggregate([
             {
                 $lookup: {
@@ -143,6 +149,11 @@ const getUsuarios = async () => {
                     as: "datos_estatus",
                 },
             },
+            {
+                $match: {
+                  "datos_estatus._id": estatusActivo
+                }
+              }, 
             {
                 $lookup: {
                     from: "roles",
@@ -160,6 +171,7 @@ const getUsuarios = async () => {
                     apellido_materno: 1,
                     correo: 1,
                     celular: 1,
+                    url_img: 1,  
                     nombre_estatus: { $arrayElemAt: ["$datos_estatus.nombre", 0] }, // Asume que el campo del nombre del estatus es 'nombre'                            
                     uid_estatus: { $arrayElemAt: ["$datos_estatus._id", 0] },
                     nombre_rol: { $arrayElemAt: ["$datos_rol.nombre", 0] }, // Asume que el campo del nombre del estatus es 'nombre'                            

@@ -3,6 +3,8 @@ const bcryptjs = require('bcryptjs');
 
 const { Usuario, Estatus } = require('../models/index.models')
 const { generarJWT, googleVerify } = require('../helpers/index.helpers');
+const { obtenerEstatusActivo, verificarEstatusActivo } = require('../helpers/db_validators/estatus.helpers');
+const { obtenerRolUsuario } = require('../helpers/db_validators/role.helpers');
 
 
 const login = async (req, res = response) => {    
@@ -41,7 +43,7 @@ const login = async (req, res = response) => {
                 ok: false,
                 body: "La contraseña o el correo no es correcto"
             })
-        }
+        }        
 
         // Generar el JWT - Token
         const token = await generarJWT(usuario.id)
@@ -66,7 +68,7 @@ const renovarToken = async (req, res = response) => {
     const { usuario } = req
 
     // Generar el JWT - Token
-    const token = await generarJWT(usuario.uid)
+    const token = await generarJWT(usuario.id)
 
     res.json({
         ok: true,
@@ -88,6 +90,10 @@ const googleSigIn = async (req, res = response) => {
 
         let usuario = await Usuario.findOne({ correo })
 
+        const fecha_creacion = new Date()
+        const uid_rol = await obtenerRolUsuario()
+        const uid_estatus = await obtenerEstatusActivo()
+
         if (!usuario) {
             // si no existe, se crea el usuario
             const data = {
@@ -96,7 +102,9 @@ const googleSigIn = async (req, res = response) => {
                 password: '',
                 img,
                 google: true,
-                role: 'User_role'
+                uid_rol,
+                uid_estatus,
+                fecha_creacion,
             }
 
             usuario = new Usuario(data)
@@ -104,13 +112,7 @@ const googleSigIn = async (req, res = response) => {
             await usuario.save()
         }
 
-        // Si el usuario existe en DB
-        if (!usuario.state) {
-            return res.status(401).json({
-                ok: false,
-                body: "Usuario borrado, hable con el administrador"
-            })
-        }
+        await verificarEstatusActivo(data)       
 
         // Generar el JWT - Token
         const token = await generarJWT(usuario.id)
