@@ -55,7 +55,8 @@ const createEmprendimiento = async (req, res = response) => {
         })
 
     } catch (error) {
-        res.status(500).json({
+        res.status
+        (500).json({
             ok: false,
             body: `Ocurrio un problema con el servidor, contacta con el administrador. ${error.message}`
         })
